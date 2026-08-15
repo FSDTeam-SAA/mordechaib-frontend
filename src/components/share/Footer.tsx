@@ -102,9 +102,9 @@ function Footer() {
         <div className="mt-12 flex flex-col gap-4 border-t border-white/15 pt-6 text-[10px] text-indigo-100/60 sm:mt-14 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Booking Is Yours. All rights reserved.</p>
           <div className="flex items-center gap-2">
-            <Link href="#" className="transition-colors hover:text-white">Privacy Policy</Link>
+            <Link href="/p&p" className="transition-colors hover:text-white">Privacy Policy</Link>
             <span aria-hidden="true">•</span>
-            <Link href="#" className="transition-colors hover:text-white">Terms of Service</Link>
+            <Link href="/t&c" className="transition-colors hover:text-white">Terms &amp; Conditions</Link>
           </div>
         </div>
       </div>
