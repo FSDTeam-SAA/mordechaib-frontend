@@ -6,7 +6,7 @@ import FaqSection from "@/components/home/FaqSection";
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
 import PolicyQuestions from "@/components/home/PolicyQuestions";
-import PricingSection from "@/components/home/PricingSection";
+// import PricingSection from "@/components/home/PricingSection";
 import StatsCounter from "@/components/home/StatsCounter";
 import TrustedLeaders from "@/components/home/TrustedLeaders";
 import UsageEstimator from "@/components/home/UsageEstimator";
@@ -19,7 +19,7 @@ function page() {
       <HowItWorks />
       <AIAgentSystem />
       <EfficiencyGains />
-      <PricingSection />
+      {/* <PricingSection /> */}
       <AddOnsSection />
       <UsageEstimator />
       <TrustedLeaders />
