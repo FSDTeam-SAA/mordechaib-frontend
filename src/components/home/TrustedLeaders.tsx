@@ -26,7 +26,7 @@ const testimonials = [
   {
     name: "Emma Davis",
     role: "MANAGER @FAANG BUDDY",
-    image: "/profile2.png",
+    image: "/review.png",
     quote:
       "I needed a sounding board to pressure-test our quarterly strategy. The guidance was incredibly practical, helping us identify critical bottlenecks in our operations and double down on what works.",
   },
