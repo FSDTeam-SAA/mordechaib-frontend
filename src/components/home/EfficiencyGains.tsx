@@ -101,28 +101,28 @@ const cards = [
 
 const EfficiencyGains = () => {
   return (
-    <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[760px] text-center">
           <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#E8FFF6] px-3 py-1.5 text-xs font-medium text-[#10B981]">
             <TrendingUp size={13} />
             Real ROI
           </div>
-          <h2 className="text-3xl font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[42px]">
+          <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[42px]">
             See Exactly How Much Efficiency
             <br className="hidden sm:block" /> Your <span className="text-[#5B7FF0]">Business Gains</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-[680px] text-sm leading-relaxed text-[#0E1224]">
+          <p className="mx-auto mt-3 max-w-[680px] text-[13px] leading-relaxed text-[#0E1224] sm:mt-4 sm:text-sm">
             The more you use Noltra, the more leverage you gain. Track every automated task,
             every saved hour, and every decision accelerated.
           </p>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-[960px] gap-5 lg:grid-cols-2">
+        <div className="mx-auto mt-9 grid max-w-[960px] gap-4 sm:mt-12 sm:gap-5 lg:grid-cols-2">
           {cards.map((card) => {
             const Icon = card.icon;
             return (
-              <article key={card.title} className="rounded-xl border border-[#E7E7E7] bg-white p-5 shadow-[0_0_12px_rgba(14,18,36,0.10)]">
+              <article key={card.title} className="rounded-xl border border-[#E7E7E7] bg-white p-4 shadow-[0_0_12px_rgba(14,18,36,0.10)] sm:p-5">
                 <div className="flex items-center justify-between">
                   <span className={`flex h-9 w-9 items-center justify-center rounded-md bg-current/10 ${card.color}`}>
                     <Icon size={19} />
@@ -130,7 +130,7 @@ const EfficiencyGains = () => {
                   <span className="rounded-md bg-[#ECFFF8] px-2 py-1 text-xs text-[#10B981]">{card.stat}</span>
                 </div>
                 <div className="mt-5">
-                  <span className={`text-[36px] font-bold leading-none ${card.color}`}>{card.value}</span>
+                  <span className={`text-[32px] font-bold leading-none sm:text-[36px] ${card.color}`}>{card.value}</span>
                   <span className={`ml-2 text-xs ${card.color}`}>{card.suffix}</span>
                 </div>
                 <p className="mt-5 text-sm text-[#0E1224]">{card.sub}</p>

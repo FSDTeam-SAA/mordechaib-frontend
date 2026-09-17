@@ -19,13 +19,13 @@ function ChangePasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-8 py-12">
+      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-10 sm:px-8 sm:py-12 lg:w-1/2">
         <div className="w-full max-w-md">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-blue-600 mb-2">
+          <div className="mb-7 sm:mb-8">
+            <h1 className="mb-2 text-[28px] font-bold text-blue-600 sm:text-4xl">
               Change Password
             </h1>
             <p className="text-gray-500 text-sm">
@@ -34,7 +34,7 @@ function ChangePasswordForm() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
             {/* Create New Password */}
             <div>
               <label

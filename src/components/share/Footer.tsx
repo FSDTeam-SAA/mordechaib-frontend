@@ -10,12 +10,12 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#5d7ff2] px-4 py-12 text-white sm:px-6 lg:px-8">
+    <footer className="bg-[#5d7ff2] px-4 py-10 text-white sm:px-6 sm:py-12 lg:px-8">
       <div className="container mx-auto">
-        <div className="grid gap-10 md:grid-cols-[1.2fr_1.6fr_0.8fr] md:items-center">
+        <div className="grid gap-8 sm:gap-10 md:grid-cols-[1.2fr_1.6fr_0.8fr] md:items-center">
           <div>
             <Link href="/" className="inline-flex items-center gap-2">
-              <span className="flex h-[60px] w-[60px] items-center justify-center rounded bg-white">
+              <span className="flex h-12 w-12 items-center justify-center rounded bg-white sm:h-[60px] sm:w-[60px]">
                 <Image
                   src="/logo.png"
                   alt="Notra.ai"
@@ -31,7 +31,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 text-sm font-medium sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6 text-xs font-medium sm:grid-cols-3 sm:text-sm">
             {links.map((group, index) => (
               <div key={index} className="space-y-5">
                 {group.map((item) => (

@@ -62,13 +62,13 @@ function VerifyEmailForm() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-8 py-12">
+      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-10 sm:px-8 sm:py-12 lg:w-1/2">
         <div className="w-full max-w-md">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-blue-600 mb-2">
+          <div className="mb-7 sm:mb-8">
+            <h1 className="mb-2 text-[28px] font-bold text-blue-600 sm:text-4xl">
               Verify Email
             </h1>
             <p className="text-gray-500 text-sm">
@@ -77,9 +77,9 @@ function VerifyEmailForm() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
             {/* OTP Inputs */}
-            <div className="flex gap-3">
+            <div className="grid grid-cols-6 gap-2 sm:flex sm:gap-3">
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -91,14 +91,14 @@ function VerifyEmailForm() {
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={handlePaste}
-                  className={`w-12 h-12 text-center text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all
+                  className={`h-11 w-full min-w-0 rounded-lg border text-center text-base font-semibold transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 sm:h-12 sm:w-12 sm:text-lg
                     ${digit ? "border-blue-500 text-blue-600" : "border-gray-300 text-gray-900"}`}
                 />
               ))}
             </div>
 
             {/* Timer & Resend */}
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex flex-col gap-3 text-sm min-[380px]:flex-row min-[380px]:items-center min-[380px]:justify-between">
               <div className="flex items-center gap-1 text-gray-500">
                 <Clock className="w-4 h-4" />
                 <span>{formatTime(timer)}</span>
