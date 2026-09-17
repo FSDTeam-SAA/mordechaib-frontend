@@ -97,13 +97,13 @@ const StatsCounter = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+    <section ref={sectionRef} className="bg-white px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
       <div className="container mx-auto">
         <div className="grid divide-y divide-[#CECECE] rounded-none bg-white sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <div
               key={stat.label}
-              className="relative flex min-h-[122px] flex-col items-center justify-center px-4 py-8 text-center sm:px-8"
+              className="relative flex min-h-[104px] flex-col items-center justify-center px-4 py-6 text-center sm:min-h-[122px] sm:px-8 sm:py-8"
             >
               {index % 2 === 1 && (
                 <span className="absolute left-0 top-1/2 hidden h-[76px] w-px -translate-y-1/2 bg-[#CECECE] sm:block lg:hidden" />
@@ -111,10 +111,10 @@ const StatsCounter = () => {
               {index > 0 && (
                 <span className="absolute left-0 top-1/2 hidden h-[76px] w-px -translate-y-1/2 bg-[#CECECE] lg:block" />
               )}
-              <p className="text-[42px] font-bold leading-none tracking-normal text-[#000000] sm:text-[44px] lg:text-[60px]">
+              <p className="text-[34px] font-bold leading-none tracking-normal text-[#000000] sm:text-[44px] lg:text-[60px]">
                 {formatValue(stat, progress)}
               </p>
-              <p className="mt-4 text-xl font-normal leading-relaxed text-[#6B6B6B]">
+              <p className="mt-3 text-sm font-normal leading-relaxed text-[#6B6B6B] sm:mt-4 sm:text-lg lg:text-xl">
                 {stat.label}
               </p>
             </div>

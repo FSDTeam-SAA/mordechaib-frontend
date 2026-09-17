@@ -60,15 +60,15 @@ const agents = [
 
 const AIAgentSystem = () => {
   return (
-    <section className="bg-[#F5F7FF] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[760px] text-center">
-          <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-base font-medium text-[#5B7FF0]">
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-[11px] font-medium text-[#5B7FF0] sm:mb-5 sm:text-sm">
             <Bot size={13} />
             AI Agent System
           </div>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#8EA6F8] bg-white">
+            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#8EA6F8] bg-white sm:h-16 sm:w-16">
               <Image
                 src="/profile.png"
                 alt="Laura profile"
@@ -77,20 +77,20 @@ const AIAgentSystem = () => {
                 className="object-cover"
               />
             </div>
-            <h2 className="text-3xl font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[46px]">
+            <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[46px]">
               Laura- Your <span className="text-[#5B7FF0]">AI Chief of Staff</span>
             </h2>
           </div>
-          <p className="mt-4 text-sm text-[#6B6B6B] sm:text-xl">
+          <p className="mt-3 text-[13px] leading-relaxed text-[#6B6B6B] sm:mt-4 sm:text-lg lg:text-xl">
             Leave a voice note. Laura turns it into action across your six AI agents.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-9 grid gap-4 sm:mt-12 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
           {agents.map((agent) => (
             <article
               key={agent.name}
-              className={`rounded-xl border-t-[4px] ${agent.color} bg-white p-5 shadow-sm`}
+              className={`rounded-xl border-t-[4px] ${agent.color} bg-white p-4 shadow-sm sm:p-5`}
             >
               <div className="flex items-center gap-3">
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-[#EAF0FF]">
@@ -107,7 +107,7 @@ const AIAgentSystem = () => {
                   <p className="text-base font-normal text-[#0E1224]">{agent.role}</p>
                 </div>
               </div>
-              <p className="mt-5 text-base  text-[#0E1224]">{agent.text}</p>
+              <p className="mt-4 text-sm leading-relaxed text-[#0E1224] sm:mt-5 sm:text-base">{agent.text}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {agent.tags.map((tag) => (
                   <span key={tag} className={`rounded-md px-3 py-2 text-xs ${agent.tagClassName}`}>

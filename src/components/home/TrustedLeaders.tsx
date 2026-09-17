@@ -74,9 +74,9 @@ const TrustedLeaders = () => {
   }, [api]);
 
   return (
-    <section className="overflow-hidden bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section className="overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
-        <h2 className="text-center text-3xl font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[42px]">
+        <h2 className="text-center text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[42px]">
           Trusted by <span className="text-[#5B7FF0]">CEO&apos;s</span> and Small
           Business <span className="text-[#5B7FF0]">Leaders</span>
         </h2>
@@ -88,15 +88,15 @@ const TrustedLeaders = () => {
           align: "start",
           loop: true,
         }}
-        className="mx-auto mt-12 w-full"
+        className="mx-auto mt-9 w-full sm:mt-12"
       >
         <CarouselContent className="-ml-5">
           {testimonials.map((item) => (
             <CarouselItem
               key={`${item.name}-${item.role}`}
-              className="basis-[86%] pl-5 sm:basis-[48%] lg:basis-[31%] xl:basis-[24%]"
+              className="basis-[92%] pl-5 sm:basis-[48%] lg:basis-[31%] xl:basis-[24%]"
             >
-              <article className="h-[427px] overflow-hidden rounded-md border border-[#B6C9FF] bg-white shadow-[0_0_8px_rgba(91,127,240,0.55)]">
+              <article className="h-[380px] overflow-hidden rounded-md border border-[#B6C9FF] bg-white shadow-[0_0_8px_rgba(91,127,240,0.55)] sm:h-[427px]">
                 {item.image ? (
                   <div className="relative h-full">
                     <Image
@@ -118,7 +118,7 @@ const TrustedLeaders = () => {
                 ) : (
                   <div className="flex h-full flex-col p-5">
                     <StarRating />
-                    <p className="mt-6 text-xl leading-relaxed text-[#0E1224]">
+                    <p className="mt-5 text-base leading-relaxed text-[#0E1224] sm:mt-6 sm:text-xl">
                       &quot;{item.quote}&quot;
                     </p>
                     <div className="mt-auto border-t border-[#E5E7F0] pt-4">

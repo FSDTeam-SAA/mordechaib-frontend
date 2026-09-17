@@ -29,22 +29,22 @@ const addOns = [
 
 const AddOnsSection = () => {
   return (
-    <section className="bg-[linear-gradient(135deg,rgba(91,156,213,0.06)_0%,rgba(217,70,239,0.06)_100%)] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section className="bg-[linear-gradient(135deg,rgba(91,156,213,0.06)_0%,rgba(217,70,239,0.06)_100%)] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="container mx-auto">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 sm:gap-8">
           <div className="h-px flex-1 bg-[#DDE3F5]" />
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-wide text-[#0E1224] sm:text-4xl lg:text-[44px]">
+            <h2 className="text-[28px] font-bold tracking-normal text-[#0E1224] sm:text-4xl lg:text-[44px]">
               ADD - ONS
             </h2>
-            <p className="mt-4 text-sm text-[#6B6B6B] sm:text-base">
+            <p className="mt-3 text-[13px] leading-relaxed text-[#6B6B6B] sm:mt-4 sm:text-base">
               Enhance your plan with additional usage packs
             </p>
           </div>
           <div className="h-px flex-1 bg-[#DDE3F5]" />
         </div>
 
-        <div className="mx-auto mt-10 grid max-w-[960px] gap-5 md:grid-cols-3">
+        <div className="mx-auto mt-8 grid max-w-[960px] gap-4 sm:mt-10 sm:gap-5 md:grid-cols-3">
           {addOns.map((addOn) => {
             const Icon = addOn.icon;
 
@@ -57,7 +57,7 @@ const AddOnsSection = () => {
                   <span className={`flex h-10 w-10 items-center justify-center rounded-full text-white ${addOn.iconBg}`}>
                     <Icon size={20} />
                   </span>
-                  <h3 className="text-xl font-bold text-[#0E1224]">{addOn.title}</h3>
+                  <h3 className="text-lg font-bold leading-tight text-[#0E1224] sm:text-xl">{addOn.title}</h3>
                 </div>
 
                 <ul className="mt-5 space-y-4">
