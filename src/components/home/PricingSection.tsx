@@ -1,4 +1,14 @@
-import { Building2, CheckCircle2, DollarSign, Rocket, Zap } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  DollarSign,
+  Mic,
+  Phone,
+  Rocket,
+  Zap,
+} from "lucide-react";
+import PricingPlanModal from "@/components/home/PricingPlanModal";
 
 const plans = [
   {
@@ -9,18 +19,19 @@ const plans = [
     icon: Rocket,
     color: "border-[#5B7FF0]",
     button: "Start Free Trial",
-    features: [
-      "6 AI Agents",
-      "500 AI Actions / month",
-      "1,000 CRM Contacts",
-      "Unlimited Voice Notes",
-      "Core AI Workflows",
-      "Standard Support",
-      "Advanced ROI Dashboard",
-      "1 User",
-      "50 AI Voice Minutes / month",
-      "Call Recording",
-      "Call Summaries",
+    groups: [
+      {
+        title: "Included Monthly Usage",
+        items: ["500 AI Actions", "1,000 CRM Contacts", "50 call minutes", "AI Meeting Capture - 10 hours"],
+      },
+      {
+        title: "Core Capabilities",
+        items: ["6 AI agents - unlimited voice notes", "Call recording & AI summaries", "Core AI workflows"],
+      },
+      {
+        title: "Support",
+        items: ["Standard support - 1 user"],
+      },
     ],
   },
   {
@@ -34,17 +45,19 @@ const plans = [
       "bg-[linear-gradient(135deg,rgba(91,156,213,0.12)_0%,rgba(217,70,239,0.12)_100%)]",
     popular: true,
     button: "Start Free Trial",
-    features: [
-      "5,000 AI Actions / month",
-      "10,000 CRM Contacts",
-      "Unlimited Voice Notes",
-      "Advanced ROI Dashboard",
-      "5 Users",
-      "API Access & Integrations",
-      "Priority Support",
-      "150 AI Voice Minutes / month",
-      "Call Recording",
-      "AI Call Summaries",
+    groups: [
+      {
+        title: "Included Monthly Usage",
+        items: ["5,000 AI Actions", "10,000 CRM contacts", "150 call minutes", "AI Meeting Capture - 10 hours"],
+      },
+      {
+        title: "Core Capabilities",
+        items: ["6 AI agents - unlimited voice notes", "Call recording & AI summaries", "ROI dashboard / API & integrations"],
+      },
+      {
+        title: "Support",
+        items: ["Priority support - 5 users"],
+      },
     ],
   },
   {
@@ -55,39 +68,42 @@ const plans = [
     icon: Building2,
     color: "border-[#F59E0B]",
     button: "Start Free Trial",
-    features: [
-      "15,000 AI Actions / month",
-      "25,000 CRM Contacts",
-      "10 Users",
-      "300 AI Voice Minutes / month",
-      "Advanced AI Workflows",
-      "Private AI Model Options",
-      "Dedicated Success Manager",
-      "SLA",
-      "Priority Integrations",
-      "Call Recording",
-      "AI Call Summaries",
+    groups: [
+      {
+        title: "Included Monthly Usage",
+        items: ["15,000 AI Actions", "25,000 CRM contacts", "300 call minutes", "AI Meeting Capture - 10 hours"],
+      },
+      {
+        title: "Core Capabilities",
+        items: ["10 users / advanced AI workflows", "Private AI model options", "Call recording & AI summaries"],
+      },
+      {
+        title: "Support",
+        items: ["Success manager / SLA"],
+      },
     ],
   },
   {
     name: "CUSTOM / ORGANIZATION",
-    price: "Variable Pricing",
-    description: "For organizations that need custom AI systems, integrations, or infrastructure.",
+    price: "Let's talk",
+    description: "Tailored capacity, integrations, and AI.",
     icon: Zap,
     color: "border-[#A855F7]",
     button: "Contact Sales",
     custom: true,
-    features: [
-      "Custom AI agent development",
-      "Custom integrations",
-      "Private dataset training",
-      "Dedicated AI engine",
-      "Custom SLAs",
-      "SLA-backed reliability",
-      "Private/hybrid deployment",
-      "Industry-specific automations",
-      "High-volume AI Actions or call minutes",
-      "Engineering pods",
+    groups: [
+      {
+        title: "Tailored Monthly Usage",
+        items: ["Custom AI actions & contacts", "Custom call-minute allocation", "AI Meeting Capture - 10 hours+"],
+      },
+      {
+        title: "Custom Solutions",
+        items: ["Custom AI agent development", "Private datasets & integrations", "Private / hybrid deployment"],
+      },
+      {
+        title: "Dedicated Partnership",
+        items: ["Dedicated AI engineer / custom SLA"],
+      },
     ],
   },
 ];
@@ -146,17 +162,39 @@ const PricingSection = () => {
                   </span>
                   {plan.note && <span className="ml-1 text-sm text-[#7A7A7A]">{plan.note}</span>}
                 </div>
-                <ul className="mt-6 space-y-2">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex gap-2 text-base text-normal text-[#0E1224]">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#5BA5E8]" />
-                      {feature}
-                    </li>
+                <div className="mt-6 space-y-5">
+                  {plan.groups.map((group) => (
+                    <div key={group.title}>
+                      <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#7A849D]">
+                        {group.title}
+                      </h4>
+                      <ul className="mt-2 space-y-2">
+                        {group.items.map((item) => (
+                          <li key={item} className="flex gap-2 text-sm leading-relaxed text-[#0E1224]">
+                            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#5BA5E8]" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
-                <button className={`mt-auto h-12 rounded-lg border border-[#5B7FF0] text-sm font-semibold ${plan.popular ? "bg-[#5B7FF0] text-white" : "text-[#5B7FF0]"}`}>
-                  {plan.button}
-                </button>
+                </div>
+
+                <div className="mt-auto border-t border-[#E5E8F2] pt-4">
+                  <p className="text-[18px] font-medium text-[#7A849D]">Communication channels</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] text-[#596078]">
+                    <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4 text-[#D94DCE]" />Calls</span>
+                    <span className="inline-flex items-center gap-1"><Mic className="h-4 w-4 text-[#5B7FF0]" />Voice Notes</span>
+                    <span className="inline-flex items-center gap-1"><CalendarDays className="h-4 w-4 text-[#5B7FF0]" />Meetings</span>
+                  </div>
+                </div>
+
+                <PricingPlanModal
+                  planName={plan.name}
+                  price={plan.price}
+                  popular={plan.popular}
+                  custom={plan.custom}
+                />
               </article>
             );
           })}
