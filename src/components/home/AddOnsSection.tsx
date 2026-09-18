@@ -1,4 +1,4 @@
-import { CheckCircle2, Mic, Rocket, Workflow } from "lucide-react";
+import { CalendarDays, CheckCircle2, Mic, Rocket, Workflow } from "lucide-react";
 
 const addOns = [
   {
@@ -25,6 +25,14 @@ const addOns = [
     text: "text-[#F59E0B]",
     items: ["+10,000 Ai Actions", "+1,000 Voice Minutes", "Priority Support"],
   },
+  {
+    title: "AI Meeting Capture",
+    icon: CalendarDays,
+    color: "border-[#AFDDBD]",
+    iconBg: "bg-[#409B68]",
+    text: "text-[#409B68]",
+    items: ["10 meeting hours — $12", "30 meeting hours — $32", "75 meeting hours — $75"],
+  },
 ];
 
 const AddOnsSection = () => {
@@ -38,13 +46,13 @@ const AddOnsSection = () => {
               ADD - ONS
             </h2>
             <p className="mt-3 text-[13px] leading-relaxed text-[#6B6B6B] sm:mt-4 sm:text-base">
-              Enhance your plan with additional usage packs
+              Click &ldquo;Start Free Trial&rdquo; on your preferred plan, then select the add-ons you need.
             </p>
           </div>
           <div className="h-px flex-1 bg-[#DDE3F5]" />
         </div>
 
-        <div className="mx-auto mt-8 grid max-w-[960px] gap-4 sm:mt-10 sm:gap-5 md:grid-cols-3">
+        <div className="mx-auto mt-8 grid max-w-[1280px] gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
           {addOns.map((addOn) => {
             const Icon = addOn.icon;
 
@@ -53,11 +61,11 @@ const AddOnsSection = () => {
                 key={addOn.title}
                 className={`rounded-xl border-2 ${addOn.color} bg-white/55 p-4 shadow-sm backdrop-blur`}
               >
-                <div className="flex items-center gap-3 border-b border-[#E5E8F2] pb-4">
-                  <span className={`flex h-10 w-10 items-center justify-center rounded-full text-white ${addOn.iconBg}`}>
+                <div className="flex items-center gap-2 border-b border-[#E5E8F2] pb-4">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white ${addOn.iconBg}`}>
                     <Icon size={20} />
                   </span>
-                  <h3 className="text-lg font-bold leading-tight text-[#0E1224] sm:text-xl">{addOn.title}</h3>
+                  <h3 className="whitespace-nowrap text-sm font-bold leading-tight text-[#0E1224] sm:text-base xl:text-sm 2xl:text-base">{addOn.title}</h3>
                 </div>
 
                 <ul className="mt-5 space-y-4">
@@ -69,9 +77,6 @@ const AddOnsSection = () => {
                   ))}
                 </ul>
 
-                <button className={`mt-7 h-11 w-full rounded-md border text-sm font-medium ${addOn.color} ${addOn.text}`}>
-                  Add To Plan
-                </button>
               </article>
             );
           })}

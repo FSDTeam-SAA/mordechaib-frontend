@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,26 +11,61 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const addOns = [
+type AddOnOption = {
+  id: string;
+  title: string;
+  price: number | null;
+};
+
+type AddOnGroup = {
+  id: string;
+  title: string;
+  description: string;
+  items?: string[];
+  options: AddOnOption[];
+};
+
+const addOnGroups: AddOnGroup[] = [
   {
-    id: "meetings",
-    title: "AI Meeting Capture - 30 hours",
-    price: 32,
-    description: "Recommended if you need 11-40 hours total",
+    id: "actions",
+    title: "AI Actions Packs",
+    description: "Extra monthly capacity for your AI workflows.",
+    options: [
+      { id: "actions-1000", title: "1,000 AI Actions", price: 25 },
+      { id: "actions-5000", title: "5,000 AI Actions", price: 90 },
+      { id: "actions-10000", title: "10,000 AI Actions", price: 300 },
+    ],
   },
   {
     id: "calls",
-    title: "Call Minutes - 2,000 minutes",
-    price: 40,
-    description: "Add only if 150 included minutes are not enough",
+    title: "AI Voice Minutes Packs",
+    description: "Additional voice minutes beyond your plan.",
+    options: [
+      { id: "calls-500", title: "500 Voice Minutes", price: 12 },
+      { id: "calls-2000", title: "2,000 Voice Minutes", price: 40 },
+      { id: "calls-10000", title: "10,000 Voice Minutes", price: 180 },
+    ],
   },
   {
-    id: "actions",
-    title: "AI Actions - 5,000 actions",
-    price: 90,
-    description: "Optional extra monthly capacity",
+    id: "operations",
+    title: "Operations Booster Pack",
+    description: "More capacity and support for your operations.",
+    items: ["+10,000 AI Actions", "+1,000 Voice Minutes", "Priority Support"],
+    options: [
+      { id: "operations-booster", title: "Operations Booster Pack", price: null },
+    ],
   },
-] as const;
+  {
+    id: "meetings",
+    title: "AI Meeting Capture",
+    description: "Additional meeting hours beyond your included capacity.",
+    options: [
+      { id: "meetings-10", title: "10 meeting hours", price: 12 },
+      { id: "meetings-30", title: "30 meeting hours", price: 32 },
+      { id: "meetings-75", title: "75 meeting hours", price: 75 },
+    ],
+  },
+];
 
 type PricingPlanModalProps = {
   planName: string;
@@ -50,12 +85,6 @@ const PricingPlanModal = ({
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
   const basePrice = Number(price.replace(/[^0-9.]/g, "")) || 0;
-  // const addOnTotal = addOns.reduce(
-    // (total, addOn) => total + (selectedAddOns.includes(addOn.id) ? addOn.price : 0),
-    // 0
-  // );
-  // const monthlyTotal = basePrice + addOnTotal;
-
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
@@ -85,7 +114,7 @@ const PricingPlanModal = ({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[92dvh] w-[calc(100%-24px)] max-w-[540px] overflow-y-auto rounded-xl border-0 bg-white p-4 shadow-2xl sm:w-full sm:p-7">
+      <DialogContent className="max-h-[92dvh] w-[calc(100%-24px)] max-w-[680px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-xl border-0 bg-white p-4 shadow-2xl sm:p-7">
         {step === "configure" ? (
           <>
             <DialogHeader className="pr-8 text-left">
@@ -124,41 +153,43 @@ const PricingPlanModal = ({
                 Select only the capacity you expect to need beyond your plan.
               </p>
 
-              <div className="mt-4 space-y-3">
-                {addOns.map((addOn) => {
-                  const selected = selectedAddOns.includes(addOn.id);
-
+              <div className="mt-4 space-y-4">
+                {addOnGroups.map((group) => {
+                  const selected = selectedAddOns.includes(group.id);
                   return (
-                    <label
-                      key={addOn.id}
-                      className={`flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors ${
-                        selected ? "border-[#5B7FF0] bg-[#F5F7FF]" : "border-[#DFE4F2] bg-white"
-                      }`}
+                    <div
+                      key={group.id}
+                      className={`rounded-lg border p-4 transition-colors ${selected ? "border-[#5B7FF0] bg-[#F5F7FF]" : "border-[#DFE4F2] bg-white"}`}
                     >
-                      <input
-                        type="checkbox"
-                        checked={selected}
-                        onChange={() => toggleAddOn(addOn.id)}
-                        className="sr-only"
-                      />
-                      <span
-                        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
-                          selected
-                            ? "border-[#5B7FF0] bg-[#5B7FF0] text-white"
-                            : "border-[#9AA8C7] bg-white text-transparent"
-                        }`}
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold leading-snug text-[#0E1224]">
-                          {addOn.title}
+                      <label className="flex cursor-pointer items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={() => toggleAddOn(group.id)}
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-[#5B7FF0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5B7FF0]"
+                        />
+                        <span>
+                          <span className="block text-sm font-semibold text-[#0E1224]">
+                            {group.title}
+                          </span>
+                          <span className="mt-1 block text-xs leading-relaxed text-[#7A849D]">
+                            {group.description}
+                          </span>
                         </span>
-                        <span className="mt-1 block text-xs leading-relaxed text-[#7A849D]">
-                          ${addOn.price}/month · {addOn.description}
-                        </span>
-                      </span>
-                    </label>
+                      </label>
+                      <ul className="ml-7 mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[#596078] sm:text-sm">
+                        {group.items
+                          ? group.items.map((item) => <li key={item}>{item}</li>)
+                          : group.options.map((option) => (
+                              <li key={option.id}>
+                                {option.title} — ${option.price}/month
+                              </li>
+                            ))}
+                      </ul>
+                      {group.items && (
+                        <p className="ml-7 mt-3 text-xs font-medium text-[#5B7FF0]">Contact sales for pricing</p>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -216,12 +247,21 @@ const PricingPlanModal = ({
                   </>
                 ) : (
                   <div className="space-y-3">
-                    {addOns
-                      .filter((addOn) => selectedAddOns.includes(addOn.id))
-                      .map((addOn) => (
-                        <div key={addOn.id} className="flex justify-between gap-4 text-sm">
-                          <span className="text-[#0E1224]">{addOn.title}</span>
-                          <span className="shrink-0 font-semibold text-[#7655F6]">${addOn.price}/mo</span>
+                    {addOnGroups
+                      .filter((group) => selectedAddOns.includes(group.id))
+                      .map((group) => (
+                        <div key={group.id} className="text-sm">
+                          <p className="font-semibold text-[#0E1224]">{group.title}</p>
+                          <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-[#596078]">
+                            {group.items
+                              ? group.items.map((item) => <li key={item}>{item}</li>)
+                              : group.options.map((option) => (
+                                  <li key={option.id}>{option.title} — ${option.price}/month</li>
+                                ))}
+                          </ul>
+                          <p className="mt-2 text-xs text-[#7A849D]">
+                            {group.items ? "Contact sales for pricing" : "Available pack prices; no capacity tier selected."}
+                          </p>
                         </div>
                       ))}
                   </div>

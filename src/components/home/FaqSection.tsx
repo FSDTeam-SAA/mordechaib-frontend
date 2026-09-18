@@ -48,7 +48,7 @@ const FaqSection = () => {
             <HelpCircle size={13} />
             FAQ
           </div>
-          <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[64px]">
+          <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl sm:leading-tight lg:text-[64px] lg:leading-tight">
             Questions
             <br />
             <span className="text-[#5B7FF0]">CEOs</span> Ask Most

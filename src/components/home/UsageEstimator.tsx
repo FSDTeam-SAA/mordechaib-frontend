@@ -1,6 +1,13 @@
+"use client";
+
+import { useState } from "react";
+
 const UsageEstimator = () => {
+  const [calls, setCalls] = useState(5000);
+  const [actions, setActions] = useState(5000);
+  const [meetingHours, setMeetingHours] = useState(30);
   return (
-    <section className="bg-[linear-gradient(135deg,rgba(91,156,213,0.06)_0%,rgba(217,70,239,0.06)_100%)] px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8 lg:pb-24">
+    <section>
       <div className="container mx-auto">
         <div className="flex items-center gap-3 sm:gap-8">
           <div className="h-px flex-1 bg-[#DDE3F5]" />
@@ -10,41 +17,83 @@ const UsageEstimator = () => {
           <div className="h-px flex-1 bg-[#DDE3F5]" />
         </div>
 
-        <div className="mx-auto mt-9 grid max-w-[860px] gap-12 md:grid-cols-2 md:gap-10">
+        <div className="mx-auto mt-9 grid max-w-[860px] gap-20 lg:max-w-[1280px] lg:grid-cols-3 lg:gap-24">
           <div>
             <div className="flex items-center justify-between text-sm font-bold text-[#0E1224]">
               <span>Monthly Calls</span>
             </div>
-            <div className="relative mt-5 h-2 rounded-full bg-[#BFBFBF]">
-               <div className="relative h-full w-[54%] rounded-full bg-[#5B7FF0]">
-                <span className="absolute -top-10 right-0 translate-x-1/2 rounded-md bg-[#5B7FF0] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#5B7FF0] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base">
-                  5000
-                </span>
-                <span className="absolute right-[-6px] top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#5B7FF0] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
+            <div className="relative mt-5 h-2 rounded-full bg-[#BFBFBF] focus-within:ring-2 focus-within:ring-[#5B7FF0] focus-within:ring-offset-4">
+               <div className="relative h-full rounded-full bg-[#5B7FF0]" style={{ width: `${((calls - 0) / 10000) * 100}%` }}>
+                <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#5B7FF0] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
               </div>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#5B7FF0] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#5B7FF0] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((calls - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
+                  {calls}
+                </span>
+              <input
+                type="range"
+                aria-label="Monthly Calls"
+                min={0}
+                max={10000}
+                step={100}
+                value={calls}
+                onChange={(event) => setCalls(Number(event.target.value))}
+                className="absolute -inset-y-3 left-0 z-10 m-0 h-8 w-full cursor-pointer opacity-0"
+              />
             </div>
-            <p className="mt-8 text-sm font-bold text-[#5B7FF0]">
-              Recommended Plan : Growth
-            </p>
           </div>
 
           <div>
             <div className="flex items-center justify-between text-sm font-bold text-[#0E1224]">
               <span>Monthly Actions</span>
             </div>
-            <div className="relative mt-5 h-2 rounded-full bg-[#BFBFBF]">
-              <div className="relative h-full w-[54%] rounded-full bg-[#D94DCE]">
-                <span className="absolute -top-10 right-0 translate-x-1/2 rounded-md bg-[#D94DCE] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#D94DCE] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base">
-                  5000
-                </span>
-                <span className="absolute right-[-6px] top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#D94DCE] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
+            <div className="relative mt-5 h-2 rounded-full bg-[#BFBFBF] focus-within:ring-2 focus-within:ring-[#5B7FF0] focus-within:ring-offset-4">
+              <div className="relative h-full rounded-full bg-[#D94DCE]" style={{ width: `${((actions - 0) / 10000) * 100}%` }}>
+                <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#D94DCE] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
               </div>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#D94DCE] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#D94DCE] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((actions - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
+                  {actions}
+                </span>
+              <input
+                type="range"
+                aria-label="Monthly Actions"
+                min={0}
+                max={10000}
+                step={100}
+                value={actions}
+                onChange={(event) => setActions(Number(event.target.value))}
+                className="absolute -inset-y-3 left-0 z-10 m-0 h-8 w-full cursor-pointer opacity-0"
+              />
             </div>
-            <p className="mt-8 text-sm font-bold text-[#D94DCE]">
-              Estimated Add - Ons: +2000 mins, +5000 actions
-            </p>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between text-sm font-bold text-[#0E1224]">
+              <span>Meeting Hours</span>
+            </div>
+            <div className="relative mt-5 h-2 rounded-full bg-[#BFBFBF] focus-within:ring-2 focus-within:ring-[#5B7FF0] focus-within:ring-offset-4">
+               <div className="relative h-full rounded-full bg-[#279C95]" style={{ width: `${((meetingHours - 10) / 65) * 100}%` }}>
+                <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#279C95] bg-white shadow-[0_0_0_3px_rgba(39,156,149,0.12)]" />
+              </div>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#279C95] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#279C95] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((meetingHours - 10) / 65) * 100}%, calc(100% - 36px))` }}>
+                  {meetingHours} hrs
+                </span>
+              <input
+                type="range"
+                aria-label="Meeting Hours"
+                min={10}
+                max={75}
+                step={1}
+                value={meetingHours}
+                onChange={(event) => setMeetingHours(Number(event.target.value))}
+                className="absolute -inset-y-3 left-0 z-10 m-0 h-8 w-full cursor-pointer opacity-0"
+              />
+            </div>
           </div>
         </div>
+        <p className="mx-auto mt-8 max-w-[1100px] text-center text-sm font-bold leading-7 text-[#5B7FF0]">
+          Recommended Plan: Growth, Estimated Add-Ons: +2000 mins, +5000 actions,{" "}
+          Recommended Add-On: AI Meeting Capture Pack, Estimated Meeting Hours Needed: 10–75 hours depending on usage
+        </p>
       </div>
     </section>
   );

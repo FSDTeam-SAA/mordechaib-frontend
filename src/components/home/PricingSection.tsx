@@ -9,6 +9,7 @@ import {
   Zap,
 } from "lucide-react";
 import PricingPlanModal from "@/components/home/PricingPlanModal";
+import UsageEstimator from "@/components/home/UsageEstimator";
 
 const plans = [
   {
@@ -110,7 +111,7 @@ const plans = [
 
 const PricingSection = () => {
   return (
-    <section className=" px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section className="px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[820px] text-center">
           <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-xs font-medium text-[#5B7FF0]">
@@ -124,7 +125,14 @@ const PricingSection = () => {
           <p className="mt-4 text-sm text-[#6B6B6B] sm:text-base">
             Enjoy a full 7-day free trial. We&apos;ll only bill your card if you continue after the trial.
           </p>
-          <div className="mx-auto mt-7 flex w-full max-w-[330px] rounded-xl bg-[#EEF3FF] p-1">
+        </div>
+
+        <div className="mt-12">
+          <UsageEstimator />
+        </div>
+
+        <div className="mt-10 text-center">
+          <div className="mx-auto flex w-full max-w-[330px] rounded-xl bg-[#EEF3FF] p-1">
             <button className="h-11 flex-1 rounded-lg bg-[#5B7FF0] text-sm font-semibold text-white">
               Monthly
             </button>
