@@ -9,7 +9,6 @@ import PolicyQuestions from "@/components/home/PolicyQuestions";
 import PricingSection from "@/components/home/PricingSection";
 import StatsCounter from "@/components/home/StatsCounter";
 import TrustedLeaders from "@/components/home/TrustedLeaders";
-import UsageEstimator from "@/components/home/UsageEstimator";
 
 function page() {
   return (
@@ -21,7 +20,6 @@ function page() {
       <EfficiencyGains />
       <PricingSection />
       <AddOnsSection />
-      <UsageEstimator />
       <TrustedLeaders />
       <FaqSection />
       <PolicyQuestions />
