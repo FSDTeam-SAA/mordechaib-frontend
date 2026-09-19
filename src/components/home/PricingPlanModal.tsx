@@ -155,37 +155,39 @@ const PricingPlanModal = ({
 
               <div className="mt-4 space-y-4">
                 {addOnGroups.map((group) => {
-                  const selected = selectedAddOns.includes(group.id);
+                  const selected = group.options.some((option) =>
+                    selectedAddOns.includes(option.id)
+                  );
                   return (
                     <div
                       key={group.id}
                       className={`rounded-lg border p-4 transition-colors ${selected ? "border-[#5B7FF0] bg-[#F5F7FF]" : "border-[#DFE4F2] bg-white"}`}
                     >
-                      <label className="flex cursor-pointer items-start gap-3">
-                        <input
-                          type="checkbox"
-                          checked={selected}
-                          onChange={() => toggleAddOn(group.id)}
-                          className="mt-0.5 h-4 w-4 shrink-0 accent-[#5B7FF0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5B7FF0]"
-                        />
-                        <span>
-                          <span className="block text-sm font-semibold text-[#0E1224]">
-                            {group.title}
-                          </span>
-                          <span className="mt-1 block text-xs leading-relaxed text-[#7A849D]">
-                            {group.description}
-                          </span>
-                        </span>
-                      </label>
-                      <ul className="ml-7 mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[#596078] sm:text-sm">
-                        {group.items
-                          ? group.items.map((item) => <li key={item}>{item}</li>)
-                          : group.options.map((option) => (
-                              <li key={option.id}>
-                                {option.title} — ${option.price}/month
-                              </li>
-                            ))}
-                      </ul>
+                      <p className="text-sm font-semibold text-[#0E1224]">{group.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-[#7A849D]">
+                        {group.description}
+                      </p>
+                      <div className="mt-3 space-y-2">
+                        {group.options.map((option) => (
+                          <label key={option.id} className="flex cursor-pointer items-center gap-3 text-xs text-[#596078] sm:text-sm">
+                            <input
+                              type="checkbox"
+                              checked={selectedAddOns.includes(option.id)}
+                              onChange={() => toggleAddOn(option.id)}
+                              className="h-4 w-4 shrink-0 accent-[#5B7FF0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5B7FF0]"
+                            />
+                            <span>
+                              {option.title}
+                              {option.price !== null && ` — $${option.price}/month`}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      {group.items && (
+                        <ul className="ml-7 mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[#596078] sm:text-sm">
+                          {group.items.map((item) => <li key={item}>{item}</li>)}
+                        </ul>
+                      )}
                       {group.items && (
                         <p className="ml-7 mt-3 text-xs font-medium text-[#5B7FF0]">Contact sales for pricing</p>
                       )}
@@ -248,16 +250,21 @@ const PricingPlanModal = ({
                 ) : (
                   <div className="space-y-3">
                     {addOnGroups
-                      .filter((group) => selectedAddOns.includes(group.id))
+                      .filter((group) =>
+                        group.options.some((option) => selectedAddOns.includes(option.id))
+                      )
                       .map((group) => (
                         <div key={group.id} className="text-sm">
                           <p className="font-semibold text-[#0E1224]">{group.title}</p>
                           <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-[#596078]">
-                            {group.items
-                              ? group.items.map((item) => <li key={item}>{item}</li>)
-                              : group.options.map((option) => (
-                                  <li key={option.id}>{option.title} — ${option.price}/month</li>
-                                ))}
+                            {group.options
+                              .filter((option) => selectedAddOns.includes(option.id))
+                              .map((option) => (
+                                <li key={option.id}>
+                                  {option.title}
+                                  {option.price !== null && ` — $${option.price}/month`}
+                                </li>
+                              ))}
                           </ul>
                           <p className="mt-2 text-xs text-[#7A849D]">
                             {group.items ? "Contact sales for pricing" : "Available pack prices; no capacity tier selected."}
