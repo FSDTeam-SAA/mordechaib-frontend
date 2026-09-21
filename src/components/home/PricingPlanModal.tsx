@@ -114,7 +114,10 @@ const PricingPlanModal = ({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[92dvh] w-[calc(100%-24px)] max-w-[680px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-xl border-0 bg-white p-4 shadow-2xl sm:p-7">
+      <DialogContent
+        data-lenis-prevent
+        className="max-h-[92dvh] w-[calc(100%-24px)] max-w-[680px] touch-pan-y overflow-y-auto overscroll-contain rounded-xl border-0 bg-white p-4 shadow-2xl [scrollbar-width:thin] [scrollbar-color:#B8C4EE_transparent] sm:p-7 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#B8C4EE] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
+      >
         {step === "configure" ? (
           <>
             <DialogHeader className="pr-8 text-left">
