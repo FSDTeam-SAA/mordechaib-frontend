@@ -216,7 +216,7 @@ function TermsContent() {
           <div className="space-y-9 sm:space-y-10">
             {termsSections.map((section, sectionIndex) => (
               <section key={section.id} id={section.id} className="scroll-mt-28">
-                <h2 className="mb-2 text-lg font-bold leading-tight text-[#141936] sm:text-[26px]">
+                <h2 className="typography-h2-section mb-2 text-[#141936]">
                   {sectionIndex + 1}. {section.title}
                 </h2>
                 <div className="space-y-2 text-xs leading-relaxed text-[#929BBB] sm:text-sm">

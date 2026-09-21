@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowRight, Menu } from "lucide-react";
 import {
   Sheet,
@@ -20,10 +23,27 @@ const navItems = [
 ];
 
 const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateNavbar = () => setIsScrolled(window.scrollY > 8);
+
+    updateNavbar();
+    window.addEventListener("scroll", updateNavbar, { passive: true });
+    return () => window.removeEventListener("scroll", updateNavbar);
+  }, []);
 
   return (
-    <header className="absolute left-0 right-0 top-0 z-20 px-3 pt-3 sm:px-6 sm:pt-6 lg:px-8">
-      <nav className="container mx-auto flex h-14 items-center justify-between rounded-md bg-[#F5F7FF] px-2.5 shadow-sm backdrop-blur sm:h-16 sm:px-4 lg:h-[72px] lg:px-4 xl:h-[84px] xl:px-5">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 px-3 transition-[padding] duration-300 ease-out sm:px-6 lg:px-8 ${
+        isScrolled ? "pt-0" : "pt-3 sm:pt-6"
+      }`}
+    >
+      <nav
+        className={`container mx-auto flex h-14 items-center justify-between bg-[#F5F7FF] px-2.5 shadow-sm backdrop-blur transition-[border-radius,box-shadow] duration-300 sm:h-16 sm:px-4 lg:h-[72px] lg:px-4 xl:h-[84px] xl:px-5 ${
+          isScrolled ? "rounded-b-md shadow-md" : "rounded-md"
+        }`}
+      >
         <Link href="/" className="flex items-center">
           <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-white shadow-sm sm:h-12 sm:w-12 lg:h-[52px] lg:w-[52px] xl:h-[60px] xl:w-[60px]">
             <Image

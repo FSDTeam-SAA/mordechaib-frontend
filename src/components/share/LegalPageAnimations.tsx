@@ -1,12 +1,10 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const LegalPageAnimations = () => {
-  const progressRef = useRef<HTMLDivElement>(null);
-
   useLayoutEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-legal-page]");
     if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -14,21 +12,6 @@ const LegalPageAnimations = () => {
     gsap.registerPlugin(ScrollTrigger);
 
     const context = gsap.context(() => {
-      gsap.fromTo(
-        progressRef.current,
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.25,
-          },
-        }
-      );
-
       const pageSections = Array.from(root.querySelectorAll<HTMLElement>(":scope > section"));
       const heroContent = pageSections[0]?.firstElementChild;
 
@@ -123,13 +106,7 @@ const LegalPageAnimations = () => {
     return () => context.revert();
   }, []);
 
-  return (
-    <div
-      ref={progressRef}
-      aria-hidden="true"
-      className="fixed inset-x-0 top-0 z-[100] h-[3px] origin-left bg-[linear-gradient(90deg,#5B7FF0,#D94DCE)]"
-    />
-  );
+  return null;
 };
 
 export default LegalPageAnimations;
