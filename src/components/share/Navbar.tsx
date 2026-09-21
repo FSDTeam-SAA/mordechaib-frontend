@@ -10,8 +10,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+const navItems = [
+  { label: "Features", href: "/#features" },
+  { label: "Solutions", href: "/#solutions" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "About", href: "/about-us" },
+  { label: "Faq", href: "/#faq" },
+  { label: "Contact", href: "/#contact" },
+];
+
 const Navbar = () => {
-  const navItems = ["Features", "Solutions", "Pricing", "About", "Faq", "Contact"];
 
   return (
     <header className="absolute left-0 right-0 top-0 z-20 px-3 pt-3 sm:px-6 sm:pt-6 lg:px-8">
@@ -32,11 +40,11 @@ const Navbar = () => {
         <div className="hidden items-center font-medium text-[#0E1224] lg:flex lg:gap-3 lg:text-sm xl:gap-7 xl:text-xl">
           {navItems.map((item) => (
             <Link
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
               className="transition-colors hover:text-[#5B7FF0]"
             >
-              {item}
+              {item.label}
             </Link>
           ))}
         </div>
@@ -88,12 +96,12 @@ const Navbar = () => {
             <div className="flex flex-1 flex-col px-5 py-6">
               <div className="flex flex-col">
                 {navItems.map((item) => (
-                  <SheetClose asChild key={item}>
+                  <SheetClose asChild key={item.label}>
                     <Link
-                      href={`#${item.toLowerCase()}`}
+                      href={item.href}
                       className="flex min-h-12 items-center justify-between border-b border-[#EEF0F7] text-base font-medium text-[#0E1224] transition-colors hover:text-[#5B7FF0]"
                     >
-                      {item}
+                      {item.label}
                       <ArrowRight className="h-4 w-4 text-[#9AA4C4]" />
                     </Link>
                   </SheetClose>

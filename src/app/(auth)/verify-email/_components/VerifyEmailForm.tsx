@@ -1,142 +1,153 @@
-"use client"
-import React, { useState, useRef, useEffect } from "react";
+"use client";
+
+import { ClipboardEvent, FormEvent, KeyboardEvent, useRef, useState } from "react";
 import Image from "next/image";
-import { Clock } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { useAuthPanelAnimation } from "@/lib/useAuthPanelAnimation";
+
+const emptyCode = ["", "", "", "", "", ""];
 
 function VerifyEmailForm() {
-  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
-  const [timer, setTimer] = useState(59);
+  const imagePanelRef = useRef<HTMLDivElement>(null);
+  const formPanelRef = useRef<HTMLDivElement>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [otp, setOtp] = useState<string[]>(emptyCode);
 
-  useEffect(() => {
-    if (timer <= 0) return;
-    const interval = setInterval(() => {
-      setTimer((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [timer]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
+  useAuthPanelAnimation(imagePanelRef, formPanelRef, "left");
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
-    setOtp(newOtp);
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+
+    const nextOtp = [...otp];
+    nextOtp[index] = value.slice(-1);
+    setOtp(nextOtp);
+
+    if (value && index < otp.length - 1) inputRefs.current[index + 1]?.focus();
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+  const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData("text").slice(0, 6).split("");
-    const newOtp = [...otp];
-    pasted.forEach((char, i) => {
-      if (/^\d$/.test(char)) newOtp[i] = char;
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const digits = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!digits) return;
+
+    const nextOtp = [...emptyCode];
+    digits.split("").forEach((digit, index) => {
+      nextOtp[index] = digit;
     });
-    setOtp(newOtp);
-    inputRefs.current[Math.min(pasted.length, 5)]?.focus();
+    setOtp(nextOtp);
+    inputRefs.current[Math.min(digits.length, 5)]?.focus();
   };
 
   const handleResend = () => {
-    setTimer(59);
-    setOtp(["", "", "", "", "", ""]);
+    setOtp([...emptyCode]);
     inputRefs.current[0]?.focus();
-    console.log("OTP resent");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("OTP submitted:", otp.join(""));
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Side - Form */}
-      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-10 sm:px-8 sm:py-12 lg:w-1/2">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="mb-7 sm:mb-8">
-            <h1 className="mb-2 text-[28px] font-bold text-blue-600 sm:text-4xl">
-              Verify Email
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Enter OTP to verify your email address
-            </p>
-          </div>
+    <main className="flex min-h-screen items-center justify-center bg-[#fbfbfc] px-4 py-8 sm:px-8 lg:px-12">
+      <section className="grid w-full max-w-[1180px] overflow-hidden rounded-[18px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-2">
+        <div
+          ref={formPanelRef}
+          className="flex min-h-[610px] items-center justify-center px-6 py-10 sm:px-12 lg:px-16 xl:px-[78px]"
+        >
+          <div className="w-full max-w-[390px]">
+            <Link
+              href="/login"
+              className="mb-8 inline-flex items-center gap-2 text-xs font-medium text-[#111526] transition hover:text-[#5f7ff0]"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Back to sign in
+            </Link>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-            {/* OTP Inputs */}
-            <div className="grid grid-cols-6 gap-2 sm:flex sm:gap-3">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(el) => { inputRefs.current[index] = el; }}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  onPaste={handlePaste}
-                  className={`h-11 w-full min-w-0 rounded-lg border text-center text-base font-semibold transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 sm:h-12 sm:w-12 sm:text-lg
-                    ${digit ? "border-blue-500 text-blue-600" : "border-gray-300 text-gray-900"}`}
-                />
-              ))}
+            <div className="mb-7 text-center">
+              <Image
+                src="/logo.png"
+                alt="Noltra.ai"
+                width={76}
+                height={76}
+                priority
+                className="mx-auto mb-5 h-auto w-[76px]"
+              />
+              <h1 className="text-[30px] font-bold leading-tight text-[#111526] sm:text-[34px]">
+                Verify your email
+              </h1>
+              <p className="mt-3 text-sm text-[#4f5363]">
+                We sent a 6-digit code to{" "}
+                <span className="font-medium text-[#111526]">you@gmail.com</span>
+              </p>
             </div>
 
-            {/* Timer & Resend */}
-            <div className="flex flex-col gap-3 text-sm min-[380px]:flex-row min-[380px]:items-center min-[380px]:justify-between">
-              <div className="flex items-center gap-1 text-gray-500">
-                <Clock className="w-4 h-4" />
-                <span>{formatTime(timer)}</span>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-6 gap-2.5 sm:gap-3" role="group" aria-label="Verification code">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(element) => {
+                      inputRefs.current[index] = element;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    maxLength={1}
+                    value={digit}
+                    onChange={(event) => handleChange(index, event.target.value)}
+                    onKeyDown={(event) => handleKeyDown(index, event)}
+                    onPaste={handlePaste}
+                    aria-label={`Digit ${index + 1}`}
+                    className="aspect-square w-full min-w-0 rounded-lg border border-transparent bg-[#f4f6fd] text-center text-base font-medium text-[#5f7ff0] outline-none transition focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
+                    required
+                  />
+                ))}
               </div>
-              <div className="text-gray-500">
-                Didn&apos;t get a code?{" "}
+
+              <div className="mt-4 text-center text-xs text-[#8B93B8]">
+                Didn&apos;t receive it?{" "}
                 <button
                   type="button"
                   onClick={handleResend}
-                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                  className="font-semibold text-[#111526] transition hover:text-[#5f7ff0]"
                 >
-                  Resend
+                  Resend code
                 </button>
               </div>
-            </div>
 
-            {/* Verify Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-md"
-            >
-              Verify
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={otp.some((digit) => !digit)}
+                className="mt-8 flex h-11 w-full items-center justify-center rounded-lg bg-[#5f7ff0] px-4 text-sm font-medium text-white transition hover:bg-[#526fdb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Verify email
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
 
-      {/* Right Side - Image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
-        <Image
-          width={400}
-          height={400}
-          src="/images/signinImage.svg"
-          alt="Verify email"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      </div>
-    </div>
+        <div
+          ref={imagePanelRef}
+          className="relative hidden min-h-[610px] overflow-hidden bg-[#6080f2] md:block"
+        >
+          <Image
+            src="/auth.png"
+            alt="Noltra AI product benefits"
+            fill
+            priority
+            sizes="(min-width: 768px) 50vw, 0px"
+            className="object-cover"
+          />
+        </div>
+      </section>
+    </main>
   );
 }
 

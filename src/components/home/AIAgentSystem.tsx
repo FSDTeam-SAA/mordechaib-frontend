@@ -60,7 +60,7 @@ const agents = [
 
 const AIAgentSystem = () => {
   return (
-    <section className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section id="features" className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[760px] text-center">
           <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-[11px] font-medium text-[#5B7FF0] sm:mb-5 sm:text-sm">

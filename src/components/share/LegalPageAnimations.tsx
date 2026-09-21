@@ -1,0 +1,135 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+const LegalPageAnimations = () => {
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const root = document.querySelector<HTMLElement>("[data-legal-page]");
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        progressRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.25,
+          },
+        }
+      );
+
+      const pageSections = Array.from(root.querySelectorAll<HTMLElement>(":scope > section"));
+      const heroContent = pageSections[0]?.firstElementChild;
+
+      if (heroContent) {
+        gsap.fromTo(
+          Array.from(heroContent.children),
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.75, stagger: 0.14, ease: "power3.out" }
+        );
+      }
+
+      const contentSection = pageSections[1];
+      const contentGrid = contentSection?.firstElementChild;
+      const aside = contentGrid?.querySelector<HTMLElement>("aside");
+      const contentMain = contentGrid?.querySelector<HTMLElement>("main");
+
+      if (aside) {
+        gsap.fromTo(
+          aside,
+          { autoAlpha: 0, x: -28 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: { trigger: contentSection, start: "top 82%", once: true },
+          }
+        );
+      }
+
+      if (contentMain) {
+        const summary = contentMain.firstElementChild;
+        if (summary) {
+          gsap.fromTo(
+            summary,
+            { autoAlpha: 0, y: 20, scale: 0.985 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.62,
+              ease: "power2.out",
+              scrollTrigger: { trigger: summary, start: "top 88%", once: true },
+            }
+          );
+        }
+
+        const legalSections = Array.from(
+          contentMain.querySelectorAll<HTMLElement>("section[id^='section-']")
+        );
+
+        legalSections.forEach((section) => {
+          const bullets = section.querySelectorAll<HTMLElement>("li");
+          const timeline = gsap.timeline({
+            scrollTrigger: { trigger: section, start: "top 88%", once: true },
+          });
+
+          timeline.fromTo(
+            section,
+            { autoAlpha: 0, x: 24 },
+            { autoAlpha: 1, x: 0, duration: 0.58, ease: "power3.out" }
+          );
+
+          if (bullets.length) {
+            timeline.fromTo(
+              bullets,
+              { autoAlpha: 0, x: 14 },
+              { autoAlpha: 1, x: 0, duration: 0.32, stagger: 0.05, ease: "power2.out" },
+              "-=0.25"
+            );
+          }
+        });
+      }
+
+      const cta = pageSections[2]?.firstElementChild;
+      if (cta) {
+        gsap.fromTo(
+          cta,
+          { autoAlpha: 0, y: 30, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.75,
+            ease: "power3.out",
+            scrollTrigger: { trigger: cta, start: "top 85%", once: true },
+          }
+        );
+      }
+    }, root);
+
+    return () => context.revert();
+  }, []);
+
+  return (
+    <div
+      ref={progressRef}
+      aria-hidden="true"
+      className="fixed inset-x-0 top-0 z-[100] h-[3px] origin-left bg-[linear-gradient(90deg,#5B7FF0,#D94DCE)]"
+    />
+  );
+};
+
+export default LegalPageAnimations;

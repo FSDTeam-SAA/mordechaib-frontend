@@ -6,10 +6,12 @@ import OurVision from "./_components/OurVision";
 import OurMission from "./_components/OurMission";
 import OurStory from "./_components/OurStory";
 import PolicyQuestions from "@/components/home/PolicyQuestions";
+import AboutAnimations from "./_components/AboutAnimations";
 
 function Page() {
   return (
-    <main>
+    <main data-about-page>
+      <AboutAnimations />
       <AboutHero />
       <AboutMetrics />
       <AboutSection />

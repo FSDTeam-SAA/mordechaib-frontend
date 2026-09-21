@@ -15,7 +15,7 @@ const Hero = () => {
       style={{ backgroundImage: "url('/herobg.png')" }}
     >
       <div className="container mx-auto grid items-center gap-10 lg:grid-cols-[1.05fr_0.85fr] xl:gap-12">
-        <div className="mx-auto max-w-[800px] text-center lg:mx-0 lg:text-left">
+        <div data-hero-copy className="mx-auto max-w-[800px] text-center lg:mx-0 lg:text-left">
           <div className="mb-3 inline-flex max-w-full items-center gap-1.5 rounded-full bg-[#5B7FF01A] px-3 py-2 text-[11px] font-medium leading-tight text-[#5B7FF0] sm:text-[13px] lg:text-[14px]">
             <Sparkles size={13} />
             <span>AI Workforce Operating System for Small Businesses</span>
@@ -79,7 +79,7 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="relative mx-auto hidden w-full max-w-[760px] lg:mx-0 lg:block lg:max-w-none">
+        <div data-hero-visual className="relative mx-auto hidden w-full max-w-[760px] lg:mx-0 lg:block lg:max-w-none">
           <Image
             src="/hero_image.png"
             alt="AI workforce dashboard"
