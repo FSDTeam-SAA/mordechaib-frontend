@@ -101,7 +101,7 @@ const cards = [
 
 const EfficiencyGains = () => {
   return (
-    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section id="solutions" className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[760px] text-center">
           <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#E8FFF6] px-3 py-1.5 text-xs font-medium text-[#10B981]">

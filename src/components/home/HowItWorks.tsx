@@ -59,7 +59,7 @@ const HowItWorks = () => {
   return (
     <section className="overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-14">
       <div className="container mx-auto">
-        <div className="mx-auto w-full max-w-[880px] text-center">
+        <div className="mx-auto w-full  text-center">
           <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-[11px] font-medium text-[#5B7FF0] sm:mb-5 sm:text-xs">
             <Bot size={13} />
             How It Works
@@ -130,6 +130,7 @@ const HowItWorks = () => {
                 return (
                   <div
                     key={step.number}
+                    data-home-step
                     className="relative mb-3 border-l border-[#A9B8F8] bg-white px-4 py-3 shadow-md last:mb-0 sm:px-7 sm:py-4"
                   >
                     <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md bg-[#FCE8FF] text-[#E84BD9] sm:right-6 sm:h-9 sm:w-9">

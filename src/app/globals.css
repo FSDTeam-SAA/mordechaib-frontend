@@ -80,3 +80,19 @@ body {
   font-family: var(--font-space-grotesk);
   overflow-x: clip;
 }
+
+@layer components {
+  .typography-h2-section {
+    font-family: var(--font-space-grotesk);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  @media (min-width: 640px) {
+    .typography-h2-section {
+      font-size: 26px;
+    }
+  }
+}

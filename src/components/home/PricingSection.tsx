@@ -111,7 +111,7 @@ const plans = [
 
 const PricingSection = () => {
   return (
-    <section className="px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
+    <section id="pricing" className="px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
       <div className="container mx-auto">
         <div className="mx-auto max-w-[820px] text-center">
           <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-xs font-medium text-[#5B7FF0]">

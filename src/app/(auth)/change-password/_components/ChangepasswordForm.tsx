@@ -1,124 +1,160 @@
-"use client"
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+"use client";
+
+import { FormEvent, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft, Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { toast } from "sonner";
+import { useAuthPanelAnimation } from "@/lib/useAuthPanelAnimation";
 
 function ChangePasswordForm() {
+  const imagePanelRef = useRef<HTMLDivElement>(null);
+  const formPanelRef = useRef<HTMLDivElement>(null);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) { 
-      alert("Passwords do not match!");
+  useAuthPanelAnimation(imagePanelRef, formPanelRef, "left");
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match!");
       return;
     }
-    console.log("Password changed successfully");
+
+    toast.success("Password changed successfully");
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Side - Form */}
-      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-10 sm:px-8 sm:py-12 lg:w-1/2">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="mb-7 sm:mb-8">
-            <h1 className="mb-2 text-[28px] font-bold text-blue-600 sm:text-4xl">
-              Change Password
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Enter your email to recover your password
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-            {/* Create New Password */}
-            <div>
-              <label
-                htmlFor="newPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Create New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showNewPassword ? "text" : "password"}
-                  id="newPassword"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showNewPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm New Password */}
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Change Password Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-md"
+    <main className="flex min-h-screen items-center justify-center bg-[#fbfbfc] px-4 py-8 sm:px-8 lg:px-12">
+      <section className="grid w-full max-w-[1180px] overflow-hidden rounded-[18px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-2">
+        <div
+          ref={formPanelRef}
+          className="flex min-h-[610px] items-center justify-center px-6 py-10 sm:px-12 lg:px-16 xl:px-[78px]"
+        >
+          <div className="w-full max-w-[390px]">
+            <Link
+              href="/login"
+              className="mb-7 inline-flex items-center gap-2 text-xs font-medium text-[#111526] transition hover:text-[#5f7ff0]"
             >
-              Change Password
-            </button>
-          </form>
-        </div>
-      </div>
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Back to sign in
+            </Link>
 
-      {/* Right Side - Image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
-        <Image
-          width={400}
-          height={400}
-          src="/images/signinImage.svg"
-          alt="Change password"
-          className="absolute inset-0 w-full h-full object-cover"
+            <div className="mb-7 text-center">
+              <Image
+                src="/logo.png"
+                alt="Noltra.ai"
+                width={76}
+                height={76}
+                priority
+                className="mx-auto mb-5 h-auto w-[76px]"
+              />
+              <h1 className="text-[30px] font-bold leading-tight text-[#111526] sm:text-[34px]">
+                Reset Password?
+              </h1>
+              <p className="mx-auto mt-3 max-w-[360px] text-sm leading-5 text-[#4f5363]">
+                Please enter a new password for your account. Use a strong password to keep your
+                account secure.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <PasswordField
+                id="newPassword"
+                label="New Password"
+                value={newPassword}
+                visible={showNewPassword}
+                onChange={setNewPassword}
+                onToggle={() => setShowNewPassword((current) => !current)}
+              />
+
+              <PasswordField
+                id="confirmPassword"
+                label="Confirm Password"
+                value={confirmPassword}
+                visible={showConfirmPassword}
+                onChange={setConfirmPassword}
+                onToggle={() => setShowConfirmPassword((current) => !current)}
+              />
+
+              <button
+                type="submit"
+                className="mt-7 flex h-11 w-full items-center justify-center rounded-lg bg-[#5f7ff0] px-4 text-sm font-medium text-white transition hover:bg-[#526fdb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0] focus-visible:ring-offset-2"
+              >
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div
+          ref={imagePanelRef}
+          className="relative hidden min-h-[610px] overflow-hidden bg-[#6080f2] md:block"
+        >
+          <Image
+            src="/auth.png"
+            alt="Noltra AI product benefits"
+            fill
+            priority
+            sizes="(min-width: 768px) 50vw, 0px"
+            className="object-cover"
+          />
+        </div>
+      </section>
+    </main>
+  );
+}
+
+type PasswordFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  visible: boolean;
+  onChange: (value: string) => void;
+  onToggle: () => void;
+};
+
+function PasswordField({
+  id,
+  label,
+  value,
+  visible,
+  onChange,
+  onToggle,
+}: PasswordFieldProps) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-2 block text-base font-normal text-[#8B93B8]">
+        {label}
+      </label>
+      <div className="relative">
+        <LockKeyhole
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9ba7ca]"
         />
+        <input
+          id={id}
+          type={visible ? "text" : "password"}
+          autoComplete="new-password"
+          minLength={8}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="Min. 8 characters"
+          className="h-11 w-full rounded-lg border border-transparent bg-[#f4f6fd] pl-10 pr-11 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
+          required
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label={visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9ba7ca] transition hover:text-[#5f7ff0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0]"
+        >
+          {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
       </div>
     </div>
   );

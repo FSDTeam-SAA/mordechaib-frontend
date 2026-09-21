@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import Image from "next/image";
 
 const PolicyQuestions = () => {
   return (
@@ -9,19 +9,27 @@ const PolicyQuestions = () => {
           style={{ backgroundImage: "url('/policy.png')" }}
         >
           <div className="relative z-10 mx-auto max-w-[900px]">
-            <h2 className="text-[28px] font-bold leading-tight text-white sm:text-5xl lg:text-[60px]">
-              Questions about these Policies?
+            <h2 className="text-[20px] font-bold leading-tight text-white sm:text-5xl lg:text-[48px]">
+             Your AI Chief of Staff is Ready ?
             </h2>
-            <p className="mx-auto mt-3 max-w-[660px] text-[13px] leading-relaxed text-white sm:mt-5 sm:text-xl">
-              Our legal team is happy to clarify any section before you sign up.
+            <p className="mx-auto mt-3  text-[12px] leading-relaxed text-white sm:mt-5 sm:text-lg">
+              Join 1,200+ small business owners who let Noltra.ai handle the admin so they can focus on growth.
             </p>
             <a
               href="mailto:mordy@noltra.ai"
-              className="mx-auto mt-6 inline-flex h-11 max-w-full items-center justify-center gap-2 rounded-md bg-white px-4 text-sm font-semibold text-[#0E1224] shadow-sm sm:mt-8 sm:h-14 sm:gap-3 sm:px-8 sm:text-base"
+              className="mx-auto mt-6 inline-flex h-12 max-w-full items-center justify-center gap-2 rounded-md bg-white px-6 text-sm font-semibold text-[#0E1224] shadow-sm sm:mt-8 sm:h-14 sm:gap-3 sm:px-8 sm:text-base"
             >
-              <Mail size={19} />
-              mordy@noltra.ai
+              
+              Get Started
             </a>
+            <Image
+              src="/arrow.png"
+              width={100}
+              height={1000}
+              sizes="100vw"
+              alt="Noltra policy"
+              className="absolute left-[30%] top-[110px] hidden sm:block"
+            />
           </div>
         </div>
       </div>

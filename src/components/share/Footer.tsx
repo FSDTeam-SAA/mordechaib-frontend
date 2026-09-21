@@ -4,9 +4,20 @@ import { Facebook, Linkedin, X, Instagram } from "lucide-react";
 
 const Footer = () => {
   const links = [
-    ["Home", "Features", "Solutions"],
-    ["About", "Pricing", "Contact"],
-    ["Terms & Conditions", "Privacy & Policy"],
+    [
+      { label: "Home", href: "/" },
+      { label: "Features", href: "/#features" },
+      { label: "Solutions", href: "/#solutions" },
+    ],
+    [
+      { label: "About", href: "/about-us" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "Contact", href: "/#contact" },
+    ],
+    [
+      { label: "Terms & Conditions", href: "/terms-and-conditions" },
+      { label: "Privacy & Policy", href: "/privacy-policy" },
+    ],
   ];
 
   return (
@@ -36,11 +47,11 @@ const Footer = () => {
               <div key={index} className="space-y-5">
                 {group.map((item) => (
                   <Link
-                    key={item}
-                    href={`#${item.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}
+                    key={item.label}
+                    href={item.href}
                     className="block"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 ))}
               </div>

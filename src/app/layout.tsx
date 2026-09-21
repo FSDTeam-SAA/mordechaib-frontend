@@ -5,6 +5,7 @@ import NextTopLoader from "nextjs-toploader";
 import AppProvider from "@/provider/AppProvider";
 import AuthProvider from "@/provider/AuthProvider";
 import { Toaster } from "sonner";
+import SmoothScrollProvider from "@/provider/SmoothScrollprovider";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default function RootLayout({
         <NextTopLoader color="#0070f3" height={3} showSpinner={false} />
         <AppProvider>
           <AuthProvider>
-            <div className="">{children}</div>
+           <SmoothScrollProvider>{children}</SmoothScrollProvider>
               <Toaster richColors position="bottom-right" />
           </AuthProvider>
         </AppProvider>

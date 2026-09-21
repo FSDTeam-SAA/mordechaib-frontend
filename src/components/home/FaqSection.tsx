@@ -41,7 +41,7 @@ const faqs = [
 
 const FaqSection = () => {
   return (
-    <section className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+    <section id="faq" className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto grid gap-10 lg:grid-cols-[0.7fr_1fr] lg:gap-16">
         <div>
           <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-xs font-medium text-[#5B7FF0]">
