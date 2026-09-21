@@ -166,7 +166,7 @@ function SigninForm() {
                 href="/sign-up"
                 className="font-medium text-[#5f7ff0] transition hover:text-[#4968d9]"
               >
-                Start free trial
+                Sign up
               </Link>
             </p>
           </div>
