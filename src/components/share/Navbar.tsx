@@ -71,7 +71,7 @@ const Navbar = () => {
 
         <div className="hidden items-center lg:flex lg:gap-2 xl:gap-3">
           <Link
-            href="#signin"
+            href="/login"
             className="rounded-md border border-[#5B7FF0] font-medium text-[#5B7FF0] transition-colors hover:bg-[#5B7FF0] hover:text-white lg:px-4 lg:py-2 lg:text-sm xl:px-8 xl:py-3 xl:text-base"
           >
             Sign In
@@ -131,7 +131,7 @@ const Navbar = () => {
               <div className="mt-auto grid gap-3 pt-8">
                 <SheetClose asChild>
                   <Link
-                    href="#signin"
+                    href="/login"
                     className="inline-flex h-12 items-center justify-center rounded-md border border-[#5B7FF0] text-sm font-semibold text-[#5B7FF0]"
                   >
                     Sign In
