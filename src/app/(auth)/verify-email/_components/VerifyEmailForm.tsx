@@ -56,7 +56,7 @@ function VerifyEmailForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#fbfbfc] px-4 py-8 sm:px-8 lg:px-12">
-      <section className="grid w-full max-w-[1180px] overflow-hidden rounded-[18px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-2">
+      <section className="grid w-full max-w-[1280px] overflow-hidden rounded-[18px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-2">
         <div
           ref={formPanelRef}
           className="flex min-h-[610px] items-center justify-center px-6 py-10 sm:px-12 lg:px-16 xl:px-[78px]"

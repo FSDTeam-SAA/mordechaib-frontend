@@ -12,7 +12,9 @@ const LegalPageAnimations = () => {
     gsap.registerPlugin(ScrollTrigger);
 
     const context = gsap.context(() => {
-      const pageSections = Array.from(root.querySelectorAll<HTMLElement>(":scope > section"));
+      const pageSections = Array.from(root.children).filter(
+        (child): child is HTMLElement => child instanceof HTMLElement && child.tagName === "SECTION"
+      );
       const heroContent = pageSections[0]?.firstElementChild;
 
       if (heroContent) {
@@ -28,7 +30,7 @@ const LegalPageAnimations = () => {
       const aside = contentGrid?.querySelector<HTMLElement>("aside");
       const contentMain = contentGrid?.querySelector<HTMLElement>("main");
 
-      if (aside) {
+      if (aside && contentSection) {
         gsap.fromTo(
           aside,
           { autoAlpha: 0, x: -28 },

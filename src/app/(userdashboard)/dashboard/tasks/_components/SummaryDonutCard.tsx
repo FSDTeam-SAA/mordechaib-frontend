@@ -1,0 +1,6 @@
+import { ChevronDown } from "lucide-react";
+
+type Legend = { label: string; value: string; color: string };
+export function SummaryDonutCard({ title, score, scoreLabel, legend }: { title: string; score: string; scoreLabel: string; legend: Legend[] }) {
+  return <section className="rounded-xl bg-white p-6"><header className="flex items-center justify-between border-b border-[#E4EAF8] pb-4"><h2 className="text-xl font-medium text-[#0E1224]">{title}</h2><button className="flex items-center gap-1 text-sm font-medium text-[#5B7FF0]">This Week<ChevronDown className="size-4" /></button></header><div className="mt-4 flex items-center gap-4"><div className="flex size-40 shrink-0 items-center justify-center rounded-full border-[18px] border-[#10B981] border-r-[#264AFF] border-b-[#F59E0B]"><div className="text-center"><p className="text-3xl font-medium text-[#0E1224]">{score}</p><p className="text-sm text-[#8B93B8]">{scoreLabel}</p></div></div><div className="min-w-0 flex-1 space-y-2">{legend.map((item) => <div className="flex items-center gap-2 text-sm" key={item.label}><i className="size-2 shrink-0 rounded-full" style={{ background: item.color }} /><span className="min-w-0 flex-1 truncate text-[#0E1224]">{item.label}</span><strong style={{ color: item.color }}>{item.value}</strong></div>)}</div></div></section>;
+}

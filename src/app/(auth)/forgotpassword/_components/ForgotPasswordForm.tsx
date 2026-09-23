@@ -1,74 +1,108 @@
-"use client"
-import React, { useState } from "react";
+"use client";
+
+import { FormEvent, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuthPanelAnimation } from "@/lib/useAuthPanelAnimation";
 
 function ForgotPasswordForm() {
+  const imagePanelRef = useRef<HTMLDivElement>(null);
+  const formPanelRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle OTP sending logic here
-    console.log("OTP sent to:", email);
+  useAuthPanelAnimation(imagePanelRef, formPanelRef, "left");
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    window.setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Password reset link sent to your email.");
+    }, 500);
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Side - Form */}
-      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-10 sm:px-8 sm:py-12 lg:w-1/2">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="mb-7 sm:mb-8">
-            <h1 className="mb-2 text-[28px] font-bold text-blue-600 sm:text-4xl">
-              Forgot Password
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Enter your email to recover your password
-            </p>
-          </div>
+    <main className="flex min-h-screen items-center justify-center bg-[#fbfbfc] px-4 py-8 sm:px-8 lg:px-12">
+      <section className="grid w-full max-w-[1280px] overflow-hidden rounded-[18px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-2">
+        <div
+          ref={formPanelRef}
+          className="flex min-h-[560px] items-center justify-center px-6 py-10 sm:px-12 md:min-h-[610px] lg:px-16 xl:px-[78px]"
+        >
+          <div className="w-full max-w-[430px]">
+            <Link
+              href="/login"
+              className="mb-7 inline-flex items-center gap-2 text-xs font-medium text-[#111526] transition hover:text-[#5f7ff0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0]"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Back to sign in
+            </Link>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-            {/* Email Field */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="hello@example.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                required
+            <div className="mb-8 text-center">
+              <Image
+                src="/logo.png"
+                alt="Noltra.ai"
+                width={76}
+                height={76}
+                priority
+                className="mx-auto mb-5 h-auto w-[76px]"
               />
+              <h1 className="text-[30px] font-bold leading-tight text-[#111526] sm:text-[34px]">
+                Forgot Password?
+              </h1>
+              <p className="mx-auto mt-3 max-w-[400px] text-sm leading-5 text-[#4f5363]">
+                If you need help resetting your password, we can help by sending you a link to
+                reset it.
+              </p>
             </div>
 
-            {/* Send OTP Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-md"
-            >
-              Send OTP
-            </button>
-          </form>
-        </div>
-      </div>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="email" className="mb-2 block text-base font-normal text-[#8B93B8]">
+                Email address
+              </label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Enter your email......"
+                required
+                className="h-11 border-transparent bg-[#f4f6fd] px-4 text-sm text-[#20263a] shadow-none placeholder:text-[#a6afca] focus-visible:border-[#5f7ff0] focus-visible:bg-white focus-visible:ring-[#5f7ff0]/20"
+              />
 
-      {/* Right Side - Image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
-        <Image
-          width={400}
-          height={400}
-          src="/images/signinImage.svg"
-          alt="Food distribution"
-          className="absolute inset-0 w-full h-full object-contain"
-        />
-      </div>
-    </div>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="mt-9 h-11 w-full bg-[#5f7ff0] text-sm font-medium hover:bg-[#526fdb] focus-visible:ring-[#5f7ff0] focus-visible:ring-offset-2"
+              >
+                {isLoading ? "Sending..." : "Continue"}
+              </Button>
+            </form>
+          </div>
+        </div>
+
+        <div
+          ref={imagePanelRef}
+          className="relative hidden min-h-[610px] overflow-hidden bg-[#6080f2] md:block"
+        >
+          <Image
+            src="/auth.png"
+            alt="Noltra AI product benefits"
+            fill
+            priority
+            sizes="(min-width: 768px) 50vw, 0px"
+            className="object-cover"
+          />
+        </div>
+      </section>
+    </main>
   );
 }
 
