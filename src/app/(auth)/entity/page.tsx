@@ -47,7 +47,7 @@ export default function EntityPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#fbfbfc] px-4 py-8 sm:px-8 lg:px-12">
-      <section className="grid w-full max-w-[990px] overflow-hidden rounded-[14px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-[1.735fr_1fr]">
+      <section className="grid w-full max-w-[1280px] overflow-hidden rounded-[14px] border border-[#e4e5e9] bg-white shadow-[0_3px_12px_rgba(15,23,42,0.12)] md:grid-cols-[1.735fr_1fr]">
         <div ref={formPanelRef} className="min-h-[536px] px-4 py-7">
           <button
             type="button"

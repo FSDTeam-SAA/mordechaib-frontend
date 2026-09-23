@@ -13,9 +13,9 @@ const ContactMeeting = () => {
           </div>
 
           <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-5xl lg:text-[60px] lg:leading-[1.2]">
-            Get in -
+            Connect with -
             <br />
-            touch with us
+            our team
           </h2>
 
           <p className="mt-3 w-full text-[13px] leading-relaxed text-[#0E1224] sm:mt-4 sm:text-lg lg:text-[20px]">

@@ -15,7 +15,7 @@ const agents = [
     name: "Cassie",
     role: "Customer Support Agent",
     color: "border-[#06B6D480]",
-    avatar: "/profile2.png",
+    avatar: "/cassie.png",
     tagClassName: "bg-[#E8FBFF] text-[#06B6D4]",
     tags: ["Ticket tagging", "Reply generation", "Issue prioritization", "Urgent escalation"],
     text: "Captures issues, drafts responses, and escalates urgent cases so clients stay happy without manual triage.",
@@ -24,7 +24,7 @@ const agents = [
     name: "Vizzy",
     role: "Operations Agent",
     color: "border-[#D24FC780]",
-    avatar: "/profile.png",
+    avatar: "/vizzy.png",
     tagClassName: "bg-[#FDEBFB] text-[#D24FC7]",
     tags: ["Task extraction", "Team assignment", "Deadline tracking", "Workflow automation"],
     text: "Extracts tasks, assigns owners, tracks deadlines, and keeps your internal machine running smoothly.",
@@ -33,7 +33,7 @@ const agents = [
     name: "Dexter",
     role: "Strategy Agent",
     color: "border-[#5B7FF080]",
-    avatar: "/profile2.png",
+    avatar: "/dexter.png",
     tagClassName: "bg-[#EEF2FF] text-[#5B7FF0]",
     tags: ["Executive reports", "Revenue forecasting", "Risk analysis", "Client scoring"],
     text: "Analyzes performance, forecasts revenue, scores clients, and delivers your daily executive briefing.",
@@ -42,7 +42,7 @@ const agents = [
     name: "Havi",
     role: "Design Agent",
     color: "border-[#F59E0B80]",
-    avatar: "/profile.png",
+    avatar: "/havi.png",
     tagClassName: "bg-[#FFF5DE] text-[#F59E0B]",
     tags: ["Brief generation", "Asset tracking", "Brand consistency", "Creative requests"],
     text: "Turns voice notes into briefs, tracks assets, and keeps every creative request brand consistent.",
@@ -51,7 +51,7 @@ const agents = [
     name: "Soshie",
     role: "Marketing Agent",
     color: "border-[#10B98180]",
-    avatar: "/profile2.png",
+    avatar: "/shshie.png",
     tagClassName: "bg-[#E9FBF5] text-[#10B981]",
     tags: ["Lead Engagement Automation", "Marketing Campaign Analytics", "Real-Time Social Listening", "Automated Content Planner"],
     text: "Automates outreach, analyzes campaigns, listens across social channels, and keeps your funnel active.",
@@ -70,11 +70,11 @@ const AIAgentSystem = () => {
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#8EA6F8] bg-white sm:h-16 sm:w-16">
               <Image
-                src="/profile.png"
+                src="/laura.png"
                 alt="Laura profile"
-                fill
-                sizes="64px"
-                className="object-cover"
+                width={1000}
+                height={1000}
+                className="w-full h-full object-cover"
               />
             </div>
             <h2 className="text-[28px] font-bold leading-tight text-[#0E1224] sm:text-4xl lg:text-[46px]">
