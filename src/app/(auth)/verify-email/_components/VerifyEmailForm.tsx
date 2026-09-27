@@ -4,17 +4,110 @@ import { ClipboardEvent, FormEvent, KeyboardEvent, useRef, useState } from "reac
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuthPanelAnimation } from "@/lib/useAuthPanelAnimation";
 
 const emptyCode = ["", "", "", "", "", ""];
 
-function VerifyEmailForm() {
+type VerifyEmailFormProps = {
+  email?: string;
+};
+
+type VerifyEmailResponse = {
+  success: boolean;
+  message?: string | string[];
+  data?: {
+    resetToken?: string;
+    expiresIn?: number;
+  };
+};
+
+function VerifyEmailForm({ email }: VerifyEmailFormProps) {
+  const router = useRouter();
   const imagePanelRef = useRef<HTMLDivElement>(null);
   const formPanelRef = useRef<HTMLDivElement>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [otp, setOtp] = useState<string[]>(emptyCode);
 
   useAuthPanelAnimation(imagePanelRef, formPanelRef, "left");
+
+  const verifyEmailMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/verify-reset-otp`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code }),
+        }
+      );
+      const result = (await response.json()) as VerifyEmailResponse;
+      const message = Array.isArray(result.message)
+        ? result.message.join(", ")
+        : result.message;
+
+      if (!response.ok || !result.success) {
+        throw new Error(message || "Email verification failed");
+      }
+
+      const resetToken = result.data?.resetToken;
+
+      if (!resetToken) {
+        throw new Error("Reset token was not returned. Please try again.");
+      }
+
+      return { ...result, message, resetToken };
+    },
+    onSuccess: (result) => {
+      localStorage.setItem("resetToken", result.resetToken);
+      toast.success(result.message || "Email verified successfully.");
+      router.push("/change-password");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Email verification failed. Please try again."
+      );
+    },
+  });
+
+  const resendCodeMutation = useMutation({
+    mutationFn: async (emailAddress: string) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/resend-verification`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailAddress }),
+        }
+      );
+      const result = (await response.json()) as VerifyEmailResponse;
+      const message = Array.isArray(result.message)
+        ? result.message.join(", ")
+        : result.message;
+
+      if (!response.ok || !result.success) {
+        throw new Error(message || "Unable to resend verification code");
+      }
+
+      return message;
+    },
+    onSuccess: (message) => {
+      setOtp([...emptyCode]);
+      inputRefs.current[0]?.focus();
+      toast.success(message || "Verification code sent successfully.");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to resend verification code. Please try again."
+      );
+    },
+  });
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -46,12 +139,29 @@ function VerifyEmailForm() {
   };
 
   const handleResend = () => {
-    setOtp([...emptyCode]);
-    inputRefs.current[0]?.focus();
+    if (!email) {
+      toast.error("Email address is missing. Please request a new code.");
+      return;
+    }
+
+    resendCodeMutation.mutate(email);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!email) {
+      toast.error("Email address is missing. Please request a new code.");
+      return;
+    }
+
+    const code = otp.join("");
+    if (code.length !== 6) {
+      toast.error("Please enter the complete 6-digit code.");
+      return;
+    }
+
+    verifyEmailMutation.mutate(code);
   };
 
   return (
@@ -84,7 +194,9 @@ function VerifyEmailForm() {
               </h1>
               <p className="mt-3 text-sm text-[#4f5363]">
                 We sent a 6-digit code to{" "}
-                <span className="font-medium text-[#111526]">you@gmail.com</span>
+                <span className="font-medium text-[#111526]">
+                  {email || "your email address"}
+                </span>
               </p>
             </div>
 
@@ -105,7 +217,7 @@ function VerifyEmailForm() {
                     onKeyDown={(event) => handleKeyDown(index, event)}
                     onPaste={handlePaste}
                     aria-label={`Digit ${index + 1}`}
-                    className="aspect-square w-full min-w-0 rounded-lg border border-transparent bg-[#f4f6fd] text-center text-base font-medium text-[#5f7ff0] outline-none transition focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
+                    className="aspect-square w-full min-w-0 rounded-[12px] border border-transparent bg-[#f4f6fd] text-center text-base font-medium text-[#5f7ff0] outline-none transition focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
                     required
                   />
                 ))}
@@ -116,18 +228,23 @@ function VerifyEmailForm() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  className="font-semibold text-[#111526] transition hover:text-[#5f7ff0]"
+                  disabled={
+                    resendCodeMutation.isPending || verifyEmailMutation.isPending
+                  }
+                  className="font-semibold text-[#111526] transition hover:text-[#5f7ff0] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Resend code
+                  {resendCodeMutation.isPending ? "Resending..." : "Resend code"}
                 </button>
               </div>
 
               <button
                 type="submit"
-                disabled={otp.some((digit) => !digit)}
-                className="mt-8 flex h-11 w-full items-center justify-center rounded-lg bg-[#5f7ff0] px-4 text-sm font-medium text-white transition hover:bg-[#526fdb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={
+                  otp.some((digit) => !digit) || verifyEmailMutation.isPending
+                }
+                className="mt-8 flex h-11 w-full items-center justify-center rounded-[12px] bg-[#5f7ff0] px-4 text-sm font-medium text-white transition hover:bg-[#526fdb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f7ff0] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Verify email
+                {verifyEmailMutation.isPending ? "Verifying..." : "Verify email"}
               </button>
             </form>
           </div>

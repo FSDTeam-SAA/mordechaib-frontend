@@ -21,7 +21,7 @@ function AboutHero() {
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start lg:gap-4">
             <Link
               href="#trial"
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#5B7FF0] px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#486EE2] sm:w-auto"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#5B7FF0] px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#486EE2] sm:w-auto"
             >
               Start Free Trial
               <ArrowRight size={16} />

@@ -206,7 +206,7 @@ function TermsContent() {
         </aside>
 
         <main className="min-w-0">
-          <div className="mb-9 flex items-start gap-3 rounded-md border border-[#F59E0B] bg-[#F59E0B1A] px-4 py-2.5 text-[#F59E0B]">
+          <div className="mb-9 flex items-start gap-3 rounded-[12px] border border-[#F59E0B] bg-[#F59E0B1A] px-4 py-2.5 text-[#F59E0B]">
             <Info className="mt-0.5 size-4 shrink-0" />
             <p className="text-[11px] leading-snug sm:text-sm font-normal">
               <span className="font-bold">Summary:</span> By using Noltra, you agree to use the platform lawfully, keep your credentials secure, and understand that AI outputs require human review. Your data is private - we never train shared models on it.

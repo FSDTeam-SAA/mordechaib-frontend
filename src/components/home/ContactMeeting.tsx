@@ -81,7 +81,7 @@ const ContactMeeting = () => {
             I agree for Noltra.ai to contact me about my enquiry.
           </label>
 
-          <Button className="mt-6 h-12 w-full rounded-md bg-[#5B7FF0] text-base font-medium text-white hover:bg-[#5B7FF0]/90">
+          <Button className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-base font-medium text-white hover:bg-[#5B7FF0]/90">
             Book A Meeting
           </Button>
         </form>

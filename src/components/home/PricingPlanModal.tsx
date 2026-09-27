@@ -104,7 +104,7 @@ const PricingPlanModal = ({
       <DialogTrigger asChild>
         <button
           type="button"
-          className={`mt-5 h-12 rounded-lg border border-[#5B7FF0] text-sm font-semibold transition-colors ${
+          className={`mt-5 h-12 rounded-[8px] border border-[#5B7FF0] text-sm font-semibold transition-colors ${
             popular
               ? "bg-[#5B7FF0] text-white hover:bg-[#4D70DC]"
               : "text-[#5B7FF0] hover:bg-[#EEF3FF]"
@@ -203,7 +203,7 @@ const PricingPlanModal = ({
             <button
               type="button"
               onClick={() => setStep("review")}
-              className="mt-6 h-12 w-full rounded-md bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
+              className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
               Continue to review
             </button>
@@ -284,7 +284,7 @@ const PricingPlanModal = ({
             <button
               type="button"
               onClick={() => handleOpenChange(false)}
-              className="mt-6 h-12 w-full rounded-md bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
+              className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
               {custom ? "Contact sales" : "Start 7-day free trial"}
             </button>

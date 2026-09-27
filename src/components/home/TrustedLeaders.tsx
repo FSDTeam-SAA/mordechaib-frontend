@@ -96,7 +96,7 @@ const TrustedLeaders = () => {
               key={`${item.name}-${item.role}`}
               className="basis-[92%] pl-5 sm:basis-[48%] lg:basis-[31%] xl:basis-[24%]"
             >
-              <article className="h-[380px] overflow-hidden rounded-md border border-[#B6C9FF] bg-white shadow-[0_0_8px_rgba(91,127,240,0.55)] sm:h-[427px]">
+              <article className="h-[380px] overflow-hidden rounded-[12px] border border-[#B6C9FF] bg-white shadow-[0_0_8px_rgba(91,127,240,0.55)] sm:h-[427px]">
                 {item.image ? (
                   <div className="relative h-full">
                     <Image

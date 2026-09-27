@@ -124,10 +124,10 @@ const EfficiencyGains = () => {
             return (
               <article key={card.title} className="rounded-xl border border-[#E7E7E7] bg-white p-4 shadow-[0_0_12px_rgba(14,18,36,0.10)] sm:p-5">
                 <div className="flex items-center justify-between">
-                  <span className={`flex h-9 w-9 items-center justify-center rounded-md bg-current/10 ${card.color}`}>
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-[12px] bg-current/10 ${card.color}`}>
                     <Icon size={19} />
                   </span>
-                  <span className="rounded-md bg-[#ECFFF8] px-2 py-1 text-xs text-[#10B981]">{card.stat}</span>
+                  <span className="rounded-[12px] bg-[#ECFFF8] px-2 py-1 text-xs text-[#10B981]">{card.stat}</span>
                 </div>
                 <div className="mt-5">
                   <span className={`text-[32px] font-bold leading-none sm:text-[36px] ${card.color}`}>{card.value}</span>

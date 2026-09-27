@@ -32,7 +32,7 @@ const Footer = () => {
                   alt="Notra.ai"
                   width={1000}
                   height={1000}
-                  className="w-full h-full object-contain rounded-md"
+                  className="w-full h-full object-contain rounded-[12px]"
                 />
               </span>
               <span className="text-sm font-bold">Notra.ai</span>

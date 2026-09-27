@@ -173,7 +173,7 @@ export default function TaskPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`rounded-md px-3 py-2 text-sm transition-colors ${activeTab === tab ? "bg-[#5B7FF0]/10 text-[#5B7FF0]" : "text-[#8B93B8] hover:text-[#5B7FF0]"}`}
+                className={`rounded-[12px] px-3 py-2 text-sm transition-colors ${activeTab === tab ? "bg-[#5B7FF0]/10 text-[#5B7FF0]" : "text-[#8B93B8] hover:text-[#5B7FF0]"}`}
                 key={tab}
               >
                 {tab}

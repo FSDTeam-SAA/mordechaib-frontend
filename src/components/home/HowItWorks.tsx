@@ -99,7 +99,7 @@ const HowItWorks = () => {
 
                     return (
                       <div key={item.title} className="flex gap-2.5 sm:gap-3">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#FCE8FF] text-[#D946EF1A] sm:h-7 sm:w-7">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[12px] bg-[#FCE8FF] text-[#D946EF1A] sm:h-7 sm:w-7">
                           <Icon size={14} className="text-[#D24FC7] sm:size-[15px]" />
                         </span>
                         <div>
@@ -133,7 +133,7 @@ const HowItWorks = () => {
                     data-home-step
                     className="relative mb-3 border-l border-[#A9B8F8] bg-white px-4 py-3 shadow-md last:mb-0 sm:px-7 sm:py-4"
                   >
-                    <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md bg-[#FCE8FF] text-[#E84BD9] sm:right-6 sm:h-9 sm:w-9">
+                    <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-[12px] bg-[#FCE8FF] text-[#E84BD9] sm:right-6 sm:h-9 sm:w-9">
                       <Icon size={18} className="sm:size-5" />
                     </span>
                     <p className="text-[26px] font-bold leading-none text-[#5B7FF0] sm:text-[32px]">

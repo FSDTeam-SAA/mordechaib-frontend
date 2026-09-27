@@ -132,12 +132,12 @@ const PricingSection = () => {
         </div>
 
         <div className="mt-10 text-center">
-          <div className="mx-auto flex w-full max-w-[330px] rounded-xl bg-[#EEF3FF] p-1">
-            <button className="h-11 flex-1 rounded-lg bg-[#5B7FF0] text-sm font-semibold text-white">
+          <div className="mx-auto flex w-full max-w-[330px] rounded-[16px] bg-[#F5F7FF] p-2">
+            <button className="h-12 flex-1 rounded-[12px] bg-[#5B7FF0] text-base font-semibold text-white">
               Monthly
             </button>
-            <button className="h-11 flex-1 rounded-lg text-sm font-semibold text-[#5B7FF0]">
-              Yearly <span className="ml-1 rounded-full bg-[#DDE7FF] px-2 py-1 text-[10px]">2 months free</span>
+            <button className="h-11 flex-1 rounded-lg text-base font-semibold text-[#5B7FF0]">
+              Yearly <span className="ml-1 rounded-full bg-[#DDE7FF] px-2 py-1 text-[12px]">2 months free</span>
             </button>
           </div>
         </div>
@@ -151,7 +151,7 @@ const PricingSection = () => {
                 className={`relative flex rounded-xl border-2 ${plan.color} bg-white p-5 shadow-sm flex-col`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-md bg-[#5B7FF0] px-4 py-1.5 text-xs font-semibold text-white">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-[12px] bg-[#5B7FF0] px-4 py-1.5 text-xs font-semibold text-white">
                     Most Popular
                   </div>
                 )}

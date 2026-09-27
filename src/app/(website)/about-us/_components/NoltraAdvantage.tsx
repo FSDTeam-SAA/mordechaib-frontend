@@ -26,7 +26,7 @@ function NoltraAdvantage() {
           {advantages.map(([Icon, title, text]) => (
             <article key={title} className="rounded-lg bg-white p-4 sm:p-5 lg:min-h-[186px]">
               <span
-                className="flex size-[40px] items-center justify-center rounded-md text-white"
+                className="flex size-[40px] items-center justify-center rounded-[12px] text-white"
                 style={{ background: "linear-gradient(134.37deg, #8A38F5 4.64%, #21D4FD 99.44%)" }}
               >
                 <Icon size={18} strokeWidth={1.8} />
