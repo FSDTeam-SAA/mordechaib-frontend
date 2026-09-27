@@ -61,7 +61,7 @@ function AboutSection() {
                   <Check size={14} strokeWidth={3} />
                 </span>
                 <div>
-                  <h3 className="text-base font-semibold leading-tight text-[#0E1224] sm:text-2xl">
+                  <h3 className="text-base capitalize font-semibold leading-tight text-[#0E1224] sm:text-2xl">
                     {benefit.title}
                   </h3>
                   <p className="mt-1 text-xs leading-relaxed text-[#141936] sm:text-base">

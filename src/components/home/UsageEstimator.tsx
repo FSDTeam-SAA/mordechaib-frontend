@@ -26,7 +26,7 @@ const UsageEstimator = () => {
                <div className="relative h-full rounded-full bg-[#5B7FF0]" style={{ width: `${((calls - 0) / 10000) * 100}%` }}>
                 <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#5B7FF0] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
               </div>
-                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#5B7FF0] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#5B7FF0] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((calls - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-[12px] bg-[#5B7FF0] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#5B7FF0] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((calls - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
                   {calls}
                 </span>
               <input
@@ -50,7 +50,7 @@ const UsageEstimator = () => {
               <div className="relative h-full rounded-full bg-[#D94DCE]" style={{ width: `${((actions - 0) / 10000) * 100}%` }}>
                 <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#D94DCE] bg-white shadow-[0_0_0_3px_rgba(217,77,206,0.12)]" />
               </div>
-                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#D94DCE] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#D94DCE] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((actions - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-[12px] bg-[#D94DCE] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#D94DCE] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((actions - 0) / 10000) * 100}%, calc(100% - 36px))` }}>
                   {actions}
                 </span>
               <input
@@ -74,7 +74,7 @@ const UsageEstimator = () => {
                <div className="relative h-full rounded-full bg-[#279C95]" style={{ width: `${((meetingHours - 10) / 65) * 100}%` }}>
                 <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#279C95] bg-white shadow-[0_0_0_3px_rgba(39,156,149,0.12)]" />
               </div>
-                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#279C95] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#279C95] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((meetingHours - 10) / 65) * 100}%, calc(100% - 36px))` }}>
+                <span className="absolute -top-10 -translate-x-1/2 whitespace-nowrap rounded-[12px] bg-[#279C95] px-2 py-1 text-xs font-bold text-white after:absolute after:-bottom-2 after:left-0 after:border-l-[10px] after:border-t-[10px] after:border-l-transparent after:border-t-[#279C95] sm:-top-11 sm:px-3 sm:py-1.5 sm:text-base" style={{ left: `clamp(36px, ${((meetingHours - 10) / 65) * 100}%, calc(100% - 36px))` }}>
                   {meetingHours} hrs
                 </span>
               <input

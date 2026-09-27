@@ -41,7 +41,7 @@ const Navbar = () => {
     >
       <nav
         className={`container mx-auto flex h-14 items-center justify-between bg-[#F5F7FF] px-2.5 shadow-sm backdrop-blur transition-[border-radius,box-shadow] duration-300 sm:h-16 sm:px-4 lg:h-[72px] lg:px-4 xl:h-[84px] xl:px-5 ${
-          isScrolled ? "rounded-b-md shadow-md" : "rounded-md"
+          isScrolled ? "rounded-b-md shadow-md" : "rounded-[12px] shadow-sm"
         }`}
       >
         <Link href="/" className="flex items-center">
@@ -72,13 +72,13 @@ const Navbar = () => {
         <div className="hidden items-center lg:flex lg:gap-2 xl:gap-3">
           <Link
             href="/login"
-            className="rounded-md border border-[#5B7FF0] font-medium text-[#5B7FF0] transition-colors hover:bg-[#5B7FF0] hover:text-white lg:px-4 lg:py-2 lg:text-sm xl:px-8 xl:py-3 xl:text-base"
+            className="rounded-[12px] border border-[#5B7FF0] font-medium text-[#5B7FF0] transition-colors hover:bg-[#5B7FF0] hover:text-white lg:px-4 lg:py-2 lg:text-sm xl:px-8 xl:py-3 xl:text-base"
           >
             Sign In
           </Link>
           <Link
             href="#trial"
-            className="rounded-md bg-[#5B7FF0] font-semibold text-white shadow-sm transition-colors hover:bg-[#5B7FF0]/90 lg:px-4 lg:py-2 lg:text-sm xl:px-6 xl:py-3 xl:text-base"
+            className="rounded-[12px] bg-[#5B7FF0] font-semibold text-white shadow-sm transition-colors hover:bg-[#5B7FF0]/90 lg:px-4 lg:py-2 lg:text-sm xl:px-6 xl:py-3 xl:text-base"
           >
             Start Free Trial
           </Link>
@@ -89,7 +89,7 @@ const Navbar = () => {
             <button
               type="button"
               aria-label="Open navigation menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#D9E0FF] bg-white text-[#10152B] shadow-sm transition-colors hover:bg-[#EEF2FF] lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#D9E0FF] bg-white text-[#10152B] shadow-sm transition-colors hover:bg-[#EEF2FF] lg:hidden"
             >
               <Menu size={20} />
             </button>
@@ -132,7 +132,7 @@ const Navbar = () => {
                 <SheetClose asChild>
                   <Link
                     href="/login"
-                    className="inline-flex h-12 items-center justify-center rounded-md border border-[#5B7FF0] text-sm font-semibold text-[#5B7FF0]"
+                    className="inline-flex h-12 items-center justify-center rounded-[12px] border border-[#5B7FF0] text-sm font-semibold text-[#5B7FF0]"
                   >
                     Sign In
                   </Link>
@@ -140,7 +140,7 @@ const Navbar = () => {
                 <SheetClose asChild>
                   <Link
                     href="#trial"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#5B7FF0] text-sm font-semibold text-white shadow-sm"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white shadow-sm"
                   >
                     Start Free Trial
                     <ArrowRight className="h-4 w-4" />

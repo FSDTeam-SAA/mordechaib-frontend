@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 alt={`${name} profile`}
                 width={60}
                 height={60}
-                className="size-[60px] shrink-0 rounded-md object-cover"
+                className="size-[60px] shrink-0 rounded-[12px] object-cover"
               />
               <div className="min-w-0">
                 <p className="font-medium text-[#0E1224]">{name}</p>

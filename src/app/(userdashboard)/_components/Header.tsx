@@ -10,19 +10,32 @@ export default function Header() {
   const isAddTaskPage = pathname === "/dashboard/tasks/add-task";
   const isRoiPage = pathname.startsWith("/dashboard/roll-dashboard");
   const isCalendarPage = pathname.startsWith("/dashboard/calendar");
+  const isCallIntelligencePage = pathname.startsWith(
+    "/dashboard/call-intelligence"
+  );
   const isSettingsPage = pathname.startsWith("/dashboard/settings");
   const settingsSection = pathname.endsWith("/security") ? "Security" : pathname.endsWith("/notifications") ? "Notifications" : pathname.endsWith("/integrations") ? "Integrations" : pathname.endsWith("/workspace") ? "Workspace" : pathname.endsWith("/ai-settings") ? "AI Settings" : "Profile";
-  const title = isCalendarPage ? "Meeting Calendar" : isRoiPage ? "ROI Dashboard" : isSettingsPage ? "Settings" : isTaskPage ? "Task" : "Dashboard";
+  const title = isCallIntelligencePage
+    ? "Call Intelligence"
+    : isCalendarPage
+      ? "Meeting Calendar"
+      : isRoiPage
+        ? "ROI Dashboard"
+        : isSettingsPage
+          ? "Settings"
+          : isTaskPage
+            ? "Task"
+            : "Dashboard";
 
   return (
     <header className="fixed left-0 right-0 top-0 z-30 flex h-[83px] items-center justify-between bg-white px-4 md:left-[260px] md:px-6">
       <div className="ml-12 min-w-0 md:ml-0">
         <h1 className="text-xl font-medium leading-normal text-[#0E1224] sm:text-2xl">{title}</h1>
-        {isRoiPage || isSettingsPage || isTaskPage ? (
+        {isCallIntelligencePage || isRoiPage || isSettingsPage || isTaskPage ? (
           <p className="hidden items-center text-sm font-medium text-[#8B93B8] sm:flex">
             Dashboard <span className="mx-2 text-[#5B7FF0]">›</span>
             {isSettingsPage && <><span>Settings</span><span className="mx-2 text-[#5B7FF0]">›</span></>}
-            <span className="text-[#5B7FF0]">{isRoiPage ? "ROI Dashboard" : isSettingsPage ? settingsSection : isAddTaskPage ? "Add New Task" : "Task"}</span>
+            <span className="text-[#5B7FF0]">{isCallIntelligencePage ? "Call Intelligence" : isRoiPage ? "ROI Dashboard" : isSettingsPage ? settingsSection : isAddTaskPage ? "Add New Task" : "Task"}</span>
           </p>
         ) : (
           <p className="mt-1 hidden truncate text-sm font-medium text-[#8B93B8] sm:block">Welcome back, Rifat! Here&apos;s what&apos;s happening with your business today.</p>

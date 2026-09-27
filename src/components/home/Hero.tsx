@@ -54,14 +54,14 @@ const Hero = () => {
           <div className="relative mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start lg:gap-4">
             <Link
               href="#trial"
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#5B7FF0] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#486EE2] sm:w-auto sm:text-base"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#5B7FF0] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#486EE2] sm:w-auto sm:text-base"
             >
               Start Free Trial
               <ArrowRight size={15} />
             </Link>
             <Link
               href="#meeting"
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md px-1 text-sm font-medium text-[#5B7FF0] sm:w-auto sm:text-base"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] px-1 text-sm font-medium text-[#5B7FF0] sm:w-auto sm:text-base"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#5B7FF0] bg-white sm:h-12 sm:w-12">
                 <CalendarDays size={20} />

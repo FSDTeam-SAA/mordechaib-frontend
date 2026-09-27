@@ -35,7 +35,7 @@ function SigninForm() {
       }
 
       toast.success("Login successful!");
-      router.push("/profile");
+      router.push("/dashboard");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Login failed";
       toast.error(message === "CredentialsSignin" ? "Invalid email or password" : message);

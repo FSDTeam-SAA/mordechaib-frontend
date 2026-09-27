@@ -62,7 +62,7 @@ const AIAgentSystem = () => {
   return (
     <section id="features" className="bg-[#F5F7FF] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="container mx-auto">
-        <div className="mx-auto max-w-[760px] text-center">
+        <div className="mx-auto text-center">
           <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#5B7FF014] px-3 py-1.5 text-[11px] font-medium text-[#5B7FF0] sm:mb-5 sm:text-sm">
             <Bot size={13} />
             AI Agent System
@@ -82,7 +82,7 @@ const AIAgentSystem = () => {
             </h2>
           </div>
           <p className="mt-3 text-[13px] leading-relaxed text-[#6B6B6B] sm:mt-4 sm:text-lg lg:text-xl">
-            Leave a voice note. Laura turns it into action across your six AI agents.
+            Leave a voice note, finish a client call, or record a meeting.Laura turns it into action across your six AI agents.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ const AIAgentSystem = () => {
               className={`rounded-xl border-t-[4px] ${agent.color} bg-white p-4 shadow-sm sm:p-5`}
             >
               <div className="flex items-center gap-3">
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-[#EAF0FF]">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[12px] bg-[#EAF0FF]">
                   <Image
                     src={agent.avatar}
                     alt={`${agent.name} profile`}
@@ -110,7 +110,7 @@ const AIAgentSystem = () => {
               <p className="mt-4 text-sm leading-relaxed text-[#0E1224] sm:mt-5 sm:text-base">{agent.text}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {agent.tags.map((tag) => (
-                  <span key={tag} className={`rounded-md px-3 py-2 text-xs ${agent.tagClassName}`}>
+                  <span key={tag} className={`rounded-[12px] px-3 py-2 text-xs ${agent.tagClassName}`}>
                     {tag}
                   </span>
                 ))}

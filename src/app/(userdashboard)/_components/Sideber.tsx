@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   BarChart3,
@@ -47,7 +48,18 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isSigningOut) return;
+
+    setIsSigningOut(true);
+    localStorage.removeItem("accessToken");
+    queryClient.clear();
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <>
@@ -138,11 +150,12 @@ export function Sidebar() {
           </Link>
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex h-12 items-center gap-2 rounded-lg px-4 text-base font-medium text-[#6B6B6B] hover:bg-[#F5F7FF]"
+            onClick={handleLogout}
+            disabled={isSigningOut}
+            className="flex h-12 items-center gap-2 rounded-lg px-4 text-base font-medium text-[#6B6B6B] hover:bg-[#F5F7FF] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogOut className="size-6" strokeWidth={1.6} />
-            Log out
+            {isSigningOut ? "Logging out..." : "Log out"}
           </button>
         </nav>
         <div className="rounded-lg bg-[linear-gradient(100deg,#5F08FA_34%,#D946EF_148%)] p-4 text-white">

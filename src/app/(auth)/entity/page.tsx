@@ -78,7 +78,7 @@ export default function EntityPage() {
               {setupOptions.map((option) => (
                 <article
                   key={option.title}
-                  className="flex min-h-[284px] flex-col rounded-md border border-[#dfe1e7] bg-white p-3.5"
+                  className="flex min-h-[284px] flex-col rounded-[12px] border border-[#dfe1e7] bg-white p-3.5"
                 >
                   <h2 className="text-base font-semibold text-[#202437]">
                     {option.title}{" "}

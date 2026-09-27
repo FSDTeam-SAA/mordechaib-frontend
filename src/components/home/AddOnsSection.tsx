@@ -1,4 +1,4 @@
-import { CalendarDays, CheckCircle2, Mic, Rocket, Workflow } from "lucide-react";
+import { CalendarDays, CheckCircle2, Phone, Rocket, Workflow } from "lucide-react";
 
 const addOns = [
   {
@@ -11,7 +11,7 @@ const addOns = [
   },
   {
     title: "AI Voice Minutes Packs",
-    icon: Mic,
+    icon: Phone,
     color: "border-[#D94DCE]",
     iconBg: "bg-[#D94DCE]",
     text: "text-[#D94DCE]",

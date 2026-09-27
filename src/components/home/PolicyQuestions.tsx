@@ -17,7 +17,7 @@ const PolicyQuestions = () => {
             </p>
             <a
               href="mailto:mordy@noltra.ai"
-              className="mx-auto mt-6 inline-flex h-12 max-w-full items-center justify-center gap-2 rounded-md bg-white px-6 text-sm font-semibold text-[#0E1224] shadow-sm sm:mt-8 sm:h-14 sm:gap-3 sm:px-8 sm:text-base"
+              className="mx-auto mt-6 inline-flex h-12 max-w-full items-center justify-center gap-2 rounded-[12px] bg-white px-6 text-sm font-semibold text-[#0E1224] shadow-sm sm:mt-8 sm:h-14 sm:gap-3 sm:px-8 sm:text-base"
             >
               
               Get Started
