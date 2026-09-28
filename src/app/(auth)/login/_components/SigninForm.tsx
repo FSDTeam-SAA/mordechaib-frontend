@@ -35,12 +35,8 @@ function SigninForm() {
       }
 
       toast.success("Login successful!");
-      const callbackUrl = new URLSearchParams(window.location.search).get(
-        "callbackUrl"
-      );
-      router.push(
-        callbackUrl?.startsWith("/dashboard") ? callbackUrl : "/dashboard"
-      );
+      router.push("/dashboard");
+      router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Login failed";
       toast.error(message === "CredentialsSignin" ? "Invalid email or password" : message);
