@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { checkoutRequest, startCheckout, type CheckoutPlan, type CheckoutAddon } from "@/lib/checkout-api";
 import { ArrowLeft } from "lucide-react";
 import {
   Dialog,
@@ -10,62 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-type AddOnOption = {
-  id: string;
-  title: string;
-  price: number | null;
-};
-
-type AddOnGroup = {
-  id: string;
-  title: string;
-  description: string;
-  items?: string[];
-  options: AddOnOption[];
-};
-
-const addOnGroups: AddOnGroup[] = [
-  {
-    id: "actions",
-    title: "AI Actions Packs",
-    description: "Extra monthly capacity for your AI workflows.",
-    options: [
-      { id: "actions-1000", title: "1,000 AI Actions", price: 25 },
-      { id: "actions-5000", title: "5,000 AI Actions", price: 90 },
-      { id: "actions-10000", title: "10,000 AI Actions", price: 300 },
-    ],
-  },
-  {
-    id: "calls",
-    title: "AI Voice Minutes Packs",
-    description: "Additional voice minutes beyond your plan.",
-    options: [
-      { id: "calls-500", title: "500 Voice Minutes", price: 12 },
-      { id: "calls-2000", title: "2,000 Voice Minutes", price: 40 },
-      { id: "calls-10000", title: "10,000 Voice Minutes", price: 180 },
-    ],
-  },
-  {
-    id: "operations",
-    title: "Operations Booster Pack",
-    description: "More capacity and support for your operations.",
-    items: ["+10,000 AI Actions", "+1,000 Voice Minutes", "Priority Support"],
-    options: [
-      { id: "operations-booster", title: "Operations Booster Pack", price: null },
-    ],
-  },
-  {
-    id: "meetings",
-    title: "AI Meeting Capture",
-    description: "Additional meeting hours beyond your included capacity.",
-    options: [
-      { id: "meetings-10", title: "10 meeting hours", price: 12 },
-      { id: "meetings-30", title: "30 meeting hours", price: 32 },
-      { id: "meetings-75", title: "75 meeting hours", price: 75 },
-    ],
-  },
-];
 
 type PricingPlanModalProps = {
   planName: string;
@@ -84,14 +32,51 @@ const PricingPlanModal = ({
   const [step, setStep] = useState<"configure" | "review">("configure");
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
-  const basePrice = Number(price.replace(/[^0-9.]/g, "")) || 0;
+  const { data: session, status } = useSession();
+  const [pending, setPending] = useState(false);
+  const inFlight = useRef(false);
+  const catalog = useQuery({
+    queryKey: ["trial-subscription-plans"], enabled: open && !custom, retry: false,
+    queryFn: ({ signal }) => checkoutRequest<CheckoutPlan[]>("/subscription-plans?billingCycle=month", { signal }),
+  });
+  const addonsQuery = useQuery({
+    queryKey: ["trial-addon-products"], enabled: open, retry: false,
+    queryFn: ({ signal }) => checkoutRequest<CheckoutAddon[]>("/addon-products", { signal }),
+  });
+  const addOnGroups = (addonsQuery.data ?? []).map(product => ({
+    id: product._id, title: product.name, description: product.description,
+    inquiryOnly: product.isInquiryOnly,
+    options: product.tiers.map((tier, tierIndex) => ({
+      id: `${product._id}:${tierIndex}`, title: tier.label,
+      price: product.isInquiryOnly ? null : tier.priceUsd,
+    })),
+  }));
+  const plan = catalog.data?.find(item => item.planType === planName.toUpperCase());
+  const basePrice = plan?.priceUsd ?? (Number(price.replace(/[^0-9.]/g, "")) || 0);
+  const trialDays = plan?.trialDays ?? 7;
   const handleOpenChange = (nextOpen: boolean) => {
+    if (inFlight.current) return;
     setOpen(nextOpen);
-    if (!nextOpen) {
-      setStep("configure");
-      setSelectedAddOns([]);
-    }
+    if (!nextOpen) { setStep("configure"); setSelectedAddOns([]); }
   };
+  async function handleCheckout() {
+    if (inFlight.current) return;
+    if (!session?.user?.accessToken) { toast.error("Please sign in before starting your trial."); return; }
+    if (!plan || plan.isInquiryOnly || custom) { toast.error("This plan requires contacting sales."); return; }
+    if (selectedAddOns.length && (addonsQuery.isFetching || addonsQuery.error)) {
+      toast.error("Please reload the add-ons before checking out."); return;
+    }
+    inFlight.current = true;
+    setPending(true);
+    try {
+      const url = await startCheckout(plan._id, selectedAddOns, addonsQuery.data ?? [], window.location.origin, session.user.accessToken);
+      window.location.assign(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to start checkout. Please try again.");
+      inFlight.current = false;
+      setPending(false);
+    }
+  }
 
   const toggleAddOn = (id: string) => {
     setSelectedAddOns((current) =>
@@ -146,7 +131,7 @@ const PricingPlanModal = ({
                 </button>
               </div>
               <p className="mt-1 text-xs text-[#596078]">
-                {custom ? "Custom pricing" : `${price}/month`} · 7-day free trial · 10 meeting hours included
+                {custom ? "Custom pricing" : plan ? `$${basePrice}/month` : price} · {trialDays}-day free trial · {plan?.meetingHoursPerMonth ?? "—"} meeting hours included
               </p>
             </div>
 
@@ -157,6 +142,12 @@ const PricingPlanModal = ({
               </p>
 
               <div className="mt-4 space-y-4">
+                {!custom && catalog.isPending && <p role="status" className="text-sm text-[#7A849D]">Loading subscription plan…</p>}
+                {!custom && catalog.error && <p role="alert" className="text-sm text-red-500">{catalog.error.message} <button type="button" onClick={() => void catalog.refetch()} className="underline">Try again</button></p>}
+                {!custom && catalog.data && !plan && <p role="alert" className="text-sm text-red-500">This plan is currently unavailable.</p>}
+                {addonsQuery.isPending && <p role="status" className="text-sm text-[#7A849D]">Loading add-ons…</p>}
+                {addonsQuery.error && <p role="alert" className="text-sm text-red-500">{addonsQuery.error.message} <button type="button" onClick={() => void addonsQuery.refetch()} className="underline">Try again</button></p>}
+                {!addonsQuery.isPending && !addonsQuery.error && !addOnGroups.length && <p className="text-sm text-[#7A849D]">No add-ons available. You can continue with the base plan.</p>}
                 {addOnGroups.map((group) => {
                   const selected = group.options.some((option) =>
                     selectedAddOns.includes(option.id)
@@ -175,6 +166,7 @@ const PricingPlanModal = ({
                           <label key={option.id} className="flex cursor-pointer items-center gap-3 text-xs text-[#596078] sm:text-sm">
                             <input
                               type="checkbox"
+                              disabled={group.inquiryOnly || addonsQuery.isFetching || Boolean(addonsQuery.error)}
                               checked={selectedAddOns.includes(option.id)}
                               onChange={() => toggleAddOn(option.id)}
                               className="h-4 w-4 shrink-0 accent-[#5B7FF0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5B7FF0]"
@@ -186,14 +178,7 @@ const PricingPlanModal = ({
                           </label>
                         ))}
                       </div>
-                      {group.items && (
-                        <ul className="ml-7 mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[#596078] sm:text-sm">
-                          {group.items.map((item) => <li key={item}>{item}</li>)}
-                        </ul>
-                      )}
-                      {group.items && (
-                        <p className="ml-7 mt-3 text-xs font-medium text-[#5B7FF0]">Contact sales for pricing</p>
-                      )}
+                      {group.inquiryOnly && <p className="ml-7 mt-3 text-xs font-medium text-[#5B7FF0]">Contact sales for pricing</p>}
                     </div>
                   );
                 })}
@@ -202,6 +187,7 @@ const PricingPlanModal = ({
 
             <button
               type="button"
+              disabled={!custom && (catalog.isPending || Boolean(catalog.error) || !plan)}
               onClick={() => setStep("review")}
               className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
@@ -232,7 +218,7 @@ const PricingPlanModal = ({
               <div className="mt-3 flex items-start justify-between gap-4 rounded-lg bg-[#F7F8FC] p-4">
                 <div>
                   <p className="font-semibold text-[#0E1224]">{planName}</p>
-                  <p className="mt-2 text-xs text-[#7A849D]">Begins after the 7-day free trial</p>
+                  <p className="mt-2 text-xs text-[#7A849D]">Begins after the {trialDays}-day free trial</p>
                 </div>
                 <p className="shrink-0 text-xl font-bold text-[#7655F6]">
                   {custom ? "Custom" : `$${basePrice}/month`}
@@ -270,7 +256,7 @@ const PricingPlanModal = ({
                               ))}
                           </ul>
                           <p className="mt-2 text-xs text-[#7A849D]">
-                            {group.items ? "Contact sales for pricing" : "Available pack prices; no capacity tier selected."}
+                            {group.inquiryOnly ? "Contact sales for pricing" : "Selected capacity included in checkout."}
                           </p>
                         </div>
                       ))}
@@ -283,14 +269,16 @@ const PricingPlanModal = ({
 
             <button
               type="button"
-              onClick={() => handleOpenChange(false)}
+              disabled={pending || status === "loading" || (!custom && (!plan || Boolean(catalog.error)))}
+              onClick={() => custom ? handleOpenChange(false) : void handleCheckout()}
               className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
-              {custom ? "Contact sales" : "Start 7-day free trial"}
+              {pending ? "Opening checkout…" : custom ? "Contact sales" : trialDays > 0 ? `Start ${trialDays}-day free trial` : "Continue to checkout"}
             </button>
 
             <button
               type="button"
+              disabled={pending}
               onClick={() => setStep("configure")}
               className="mx-auto mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#5B7FF0]"
             >
