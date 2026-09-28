@@ -86,7 +86,7 @@ export function Sidebar() {
         )}
       >
         <div className="flex h-8 items-center justify-between border-b border-[#F5F7FF] pb-4 box-content">
-          <Link href="/dashboard">
+          <Link href="/" aria-label="Go to Noltra.ai home page">
             <Image
               src="/logo2.png"
               alt="Noltra.ai"
