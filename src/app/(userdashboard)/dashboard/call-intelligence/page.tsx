@@ -2,11 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
   Eye,
   Mic2,
   PhoneMissed,
@@ -17,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Pagination } from "@/components/share/Pagination";
 
 type CallStatus = "Received" | "AI Answered" | "Missed Call";
 
@@ -29,6 +28,8 @@ type CallRecord = {
   duration: string;
   status: CallStatus;
 };
+
+const callsPerPage = 8;
 
 const initialCalls: CallRecord[] = [
   {
@@ -186,6 +187,16 @@ export default function CallIntelligencePage() {
     });
   }, [calls, search, statusFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(visibleCalls.length / callsPerPage));
+  const paginatedCalls = visibleCalls.slice(
+    (currentPage - 1) * callsPerPage,
+    currentPage * callsPerPage,
+  );
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
+
   const deleteCall = (call: CallRecord) => {
     setCalls((current) => current.filter((item) => item.id !== call.id));
     toast.success(`${call.caller}'s call was removed.`);
@@ -307,7 +318,7 @@ export default function CallIntelligencePage() {
               </tr>
             </thead>
             <tbody>
-              {visibleCalls.map((call) => (
+              {paginatedCalls.map((call) => (
                 <tr key={call.id} className="h-[67px] text-sm text-[#141936]">
                   <td className="px-4">
                     <span className="block">{call.date}</span>
@@ -351,61 +362,15 @@ export default function CallIntelligencePage() {
         </div>
       </section>
 
-      <footer className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-[#8B93B8] sm:text-base">
-          Showing {visibleCalls.length ? 1 : 0} to {visibleCalls.length} of 120
-          results
-        </p>
-        <nav className="flex items-center gap-2" aria-label="Call pages">
-          <button
-            type="button"
-            onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            disabled={currentPage === 1}
-            aria-label="Previous page"
-            className="flex size-10 items-center justify-center rounded border border-[#8B93B8] text-[#8B93B8] disabled:opacity-40"
-          >
-            <ChevronLeft className="size-5" />
-          </button>
-          {[1, 2, 3].map((page) => (
-            <button
-              key={page}
-              type="button"
-              onClick={() => setCurrentPage(page)}
-              aria-current={currentPage === page ? "page" : undefined}
-              className={`size-10 rounded border text-sm ${
-                currentPage === page
-                  ? "border-[#5B7FF0] bg-[#5B7FF0] text-white"
-                  : "border-[#8B93B8] text-[#8B93B8]"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-          <span className="flex size-10 items-center justify-center rounded border border-[#8B93B8] text-sm text-[#8B93B8]">
-            ...
-          </span>
-          <button
-            type="button"
-            onClick={() => setCurrentPage(17)}
-            className={`size-10 rounded border text-sm ${
-              currentPage === 17
-                ? "border-[#5B7FF0] bg-[#5B7FF0] text-white"
-                : "border-[#8B93B8] text-[#8B93B8]"
-            }`}
-          >
-            17
-          </button>
-          <button
-            type="button"
-            onClick={() => setCurrentPage((page) => Math.min(17, page + 1))}
-            disabled={currentPage === 17}
-            aria-label="Next page"
-            className="flex size-10 items-center justify-center rounded border border-[#8B93B8] text-[#8B93B8] disabled:opacity-40"
-          >
-            <ChevronRight className="size-5" />
-          </button>
-        </nav>
-      </footer>
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        totalItems={visibleCalls.length}
+        pageSize={callsPerPage}
+        itemCount={paginatedCalls.length}
+        onPageChange={setCurrentPage}
+        itemLabel="results"
+      />
 
       {selectedCall && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0E1224]/35 p-4">

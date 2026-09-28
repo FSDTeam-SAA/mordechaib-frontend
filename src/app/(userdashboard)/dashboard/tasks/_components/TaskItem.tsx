@@ -1,8 +1,9 @@
 import { CalendarDays, Check } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import { TaskActionMenu } from "./TaskActionMenu";
 
 export type Task = {
-  id: number;
+  id: string | number;
   title: string;
   description: string;
   owner: string;
@@ -20,11 +21,13 @@ const priorityClasses = {
 
 type TaskItemProps = {
   task: Task;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  onViewDetails: (id: string | number) => void;
+  onEdit: (id: string | number) => void;
+  onToggle: (id: string | number) => void;
+  onDelete: (id: string | number) => void;
 };
 
-export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
+export function TaskItem({ task, onViewDetails, onEdit, onToggle, onDelete }: TaskItemProps) {
   return (
     <div className="flex gap-2 py-2 first:pt-0 sm:gap-4">
       <button
@@ -41,9 +44,10 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
         >
           {task.title}
         </p>
-        <p className="mt-1 truncate text-xs text-[#8B93B8]">
-          {task.description}
-        </p>
+        <div
+          className="mt-1 line-clamp-1 text-xs text-[#8B93B8] [&_p]:inline"
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(task.description) }}
+        />
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#8B93B8]">
           <span className="flex items-center gap-1">
             <i className="size-1.5 rounded bg-[#5B7FF0]" />
@@ -69,6 +73,8 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
         <TaskActionMenu
           taskTitle={task.title}
           isComplete={Boolean(task.done)}
+          onViewDetails={() => onViewDetails(task.id)}
+          onEdit={() => onEdit(task.id)}
           onMarkComplete={() => onToggle(task.id)}
           onDelete={() => onDelete(task.id)}
         />
