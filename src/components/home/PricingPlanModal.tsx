@@ -16,18 +16,16 @@ import {
 } from "@/components/ui/dialog";
 
 type PricingPlanModalProps = {
-  planName: string;
-  price: string;
+  plan: CheckoutPlan;
+  billingCycle: "month" | "year";
   popular?: boolean;
-  custom?: boolean;
 };
 
-const PricingPlanModal = ({
-  planName,
-  price,
-  popular = false,
-  custom = false,
-}: PricingPlanModalProps) => {
+const PricingPlanModal = ({ plan, billingCycle, popular = false }: PricingPlanModalProps) => {
+  const custom = plan.isInquiryOnly || plan.planType === "CUSTOM";
+  const price = billingCycle === "year" ? plan.annualPriceUsd : plan.priceUsd;
+  const trialDays = plan.trialDays ?? 0;
+  const planIsCheckoutable = !custom && price != null;
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"configure" | "review">("configure");
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
@@ -35,10 +33,6 @@ const PricingPlanModal = ({
   const { data: session, status } = useSession();
   const [pending, setPending] = useState(false);
   const inFlight = useRef(false);
-  const catalog = useQuery({
-    queryKey: ["trial-subscription-plans"], enabled: open && !custom, retry: false,
-    queryFn: ({ signal }) => checkoutRequest<CheckoutPlan[]>("/subscription-plans?billingCycle=month", { signal }),
-  });
   const addonsQuery = useQuery({
     queryKey: ["trial-addon-products"], enabled: open, retry: false,
     queryFn: ({ signal }) => checkoutRequest<CheckoutAddon[]>("/addon-products", { signal }),
@@ -51,9 +45,6 @@ const PricingPlanModal = ({
       price: product.isInquiryOnly ? null : tier.priceUsd,
     })),
   }));
-  const plan = catalog.data?.find(item => item.planType === planName.toUpperCase());
-  const basePrice = plan?.priceUsd ?? (Number(price.replace(/[^0-9.]/g, "")) || 0);
-  const trialDays = plan?.trialDays ?? 7;
   const handleOpenChange = (nextOpen: boolean) => {
     if (inFlight.current) return;
     setOpen(nextOpen);
@@ -62,14 +53,14 @@ const PricingPlanModal = ({
   async function handleCheckout() {
     if (inFlight.current) return;
     if (!session?.user?.accessToken) { toast.error("Please sign in before starting your trial."); return; }
-    if (!plan || plan.isInquiryOnly || custom) { toast.error("This plan requires contacting sales."); return; }
+    if (!planIsCheckoutable) { toast.error("This plan requires contacting sales."); return; }
     if (selectedAddOns.length && (addonsQuery.isFetching || addonsQuery.error)) {
       toast.error("Please reload the add-ons before checking out."); return;
     }
     inFlight.current = true;
     setPending(true);
     try {
-      const url = await startCheckout(plan._id, selectedAddOns, addonsQuery.data ?? [], window.location.origin, session.user.accessToken);
+      const url = await startCheckout(plan._id, selectedAddOns, addonsQuery.data ?? [], window.location.origin, session.user.accessToken, billingCycle);
       window.location.assign(url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to start checkout. Please try again.");
@@ -77,6 +68,11 @@ const PricingPlanModal = ({
       setPending(false);
     }
   }
+
+  const handleContactSales = () => {
+    handleOpenChange(false);
+    window.setTimeout(() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  };
 
   const toggleAddOn = (id: string) => {
     setSelectedAddOns((current) =>
@@ -86,18 +82,32 @@ const PricingPlanModal = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+      {custom ? (
         <button
           type="button"
+          onClick={handleContactSales}
           className={`mt-5 h-12 rounded-[8px] border border-[#5B7FF0] text-sm font-semibold transition-colors ${
             popular
               ? "bg-[#5B7FF0] text-white hover:bg-[#4D70DC]"
               : "text-[#5B7FF0] hover:bg-[#EEF3FF]"
           }`}
         >
-          {custom ? "Contact Sales" : "Start Free Trial"}
+          Contact Sales
         </button>
-      </DialogTrigger>
+      ) : (
+        <DialogTrigger asChild>
+          <button
+            type="button"
+            className={`mt-5 h-12 rounded-[8px] border border-[#5B7FF0] text-sm font-semibold transition-colors ${
+              popular
+                ? "bg-[#5B7FF0] text-white hover:bg-[#4D70DC]"
+                : "text-[#5B7FF0] hover:bg-[#EEF3FF]"
+            }`}
+          >
+            Start Free Trial
+          </button>
+        </DialogTrigger>
+      )}
 
       <DialogContent
         data-lenis-prevent
@@ -121,7 +131,7 @@ const PricingPlanModal = ({
 
             <div className="mt-3 rounded-lg border border-[#AFC1FF] bg-[#F2F5FF] p-4">
               <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold text-[#0E1224]">{planName} plan</p>
+                <p className="font-semibold text-[#0E1224]">{plan.name} plan</p>
                 <button
                   type="button"
                   onClick={() => handleOpenChange(false)}
@@ -131,7 +141,7 @@ const PricingPlanModal = ({
                 </button>
               </div>
               <p className="mt-1 text-xs text-[#596078]">
-                {custom ? "Custom pricing" : plan ? `$${basePrice}/month` : price} · {trialDays}-day free trial · {plan?.meetingHoursPerMonth ?? "—"} meeting hours included
+                {custom ? "Custom pricing" : price == null ? "Contact sales" : `$${price}/${billingCycle === "year" ? "year" : "month"}`} · {trialDays}-day free trial · {plan.meetingHoursPerMonth ?? "—"} meeting hours included
               </p>
             </div>
 
@@ -142,9 +152,7 @@ const PricingPlanModal = ({
               </p>
 
               <div className="mt-4 space-y-4">
-                {!custom && catalog.isPending && <p role="status" className="text-sm text-[#7A849D]">Loading subscription plan…</p>}
-                {!custom && catalog.error && <p role="alert" className="text-sm text-red-500">{catalog.error.message} <button type="button" onClick={() => void catalog.refetch()} className="underline">Try again</button></p>}
-                {!custom && catalog.data && !plan && <p role="alert" className="text-sm text-red-500">This plan is currently unavailable.</p>}
+                {!planIsCheckoutable && !custom && <p role="alert" className="text-sm text-red-500">This plan is currently unavailable for the selected billing cycle.</p>}
                 {addonsQuery.isPending && <p role="status" className="text-sm text-[#7A849D]">Loading add-ons…</p>}
                 {addonsQuery.error && <p role="alert" className="text-sm text-red-500">{addonsQuery.error.message} <button type="button" onClick={() => void addonsQuery.refetch()} className="underline">Try again</button></p>}
                 {!addonsQuery.isPending && !addonsQuery.error && !addOnGroups.length && <p className="text-sm text-[#7A849D]">No add-ons available. You can continue with the base plan.</p>}
@@ -187,7 +195,7 @@ const PricingPlanModal = ({
 
             <button
               type="button"
-              disabled={!custom && (catalog.isPending || Boolean(catalog.error) || !plan)}
+              disabled={!custom && !planIsCheckoutable}
               onClick={() => setStep("review")}
               className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
@@ -217,11 +225,11 @@ const PricingPlanModal = ({
               <p className="text-[11px] font-bold uppercase text-[#64708D]">Your plan</p>
               <div className="mt-3 flex items-start justify-between gap-4 rounded-lg bg-[#F7F8FC] p-4">
                 <div>
-                  <p className="font-semibold text-[#0E1224]">{planName}</p>
+                  <p className="font-semibold text-[#0E1224]">{plan.name}</p>
                   <p className="mt-2 text-xs text-[#7A849D]">Begins after the {trialDays}-day free trial</p>
                 </div>
                 <p className="shrink-0 text-xl font-bold text-[#7655F6]">
-                  {custom ? "Custom" : `$${basePrice}/month`}
+                  {custom ? "Custom" : price == null ? "Contact sales" : `$${price}/${billingCycle === "year" ? "year" : "month"}`}
                 </p>
               </div>
             </div>
@@ -269,8 +277,8 @@ const PricingPlanModal = ({
 
             <button
               type="button"
-              disabled={pending || status === "loading" || (!custom && (!plan || Boolean(catalog.error)))}
-              onClick={() => custom ? handleOpenChange(false) : void handleCheckout()}
+              disabled={pending || status === "loading" || (!custom && !planIsCheckoutable)}
+              onClick={() => custom ? handleContactSales() : void handleCheckout()}
               className="mt-6 h-12 w-full rounded-[12px] bg-[#5B7FF0] text-sm font-semibold text-white transition-colors hover:bg-[#4D70DC]"
             >
               {pending ? "Opening checkout…" : custom ? "Contact sales" : trialDays > 0 ? `Start ${trialDays}-day free trial` : "Continue to checkout"}

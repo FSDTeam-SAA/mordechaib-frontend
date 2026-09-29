@@ -15,6 +15,8 @@ test('payload preserves two tiers from the same product, removes duplicates, and
     planId: 'plan', successUrl: 'https://app.test/dashboard/billing?success=true', cancelUrl: 'https://app.test/dashboard/billing?canceled=true', addons: [{ addonProductId: 'product', tierIndex: 0 }, { addonProductId: 'product', tierIndex: 2 }],
   });
   assert.deepEqual(checkoutBody('plan', [], products, 'http://localhost:3000').addons, []);
+  assert.equal(checkoutBody('plan', [], products, 'https://app.test').billingCycle, undefined);
+  assert.equal(checkoutBody('plan', [], products, 'https://app.test', 'year').billingCycle, 'year');
   assert.throws(() => checkoutBody('plan', ['product:3'], products, 'https://app.test'), /unavailable/);
   assert.throws(() => checkoutBody('plan', ['product:0'], [{ ...products[0], isInquiryOnly: true }], 'https://app.test'), /unavailable/);
 });
@@ -24,6 +26,7 @@ test('checkout uses POST, bearer token and returns checkoutUrl from backend enve
     assert.equal(options.method, 'POST');
     assert.equal(options.headers.Authorization, 'Bearer session-token');
     assert.equal(JSON.parse(options.body).planId, 'plan');
+    assert.equal(JSON.parse(options.body).billingCycle, undefined);
     return Response.json({ success: true, data: { checkoutUrl: 'https://checkout.stripe.com/c/pay/test' } });
   };
   assert.equal(await startCheckout('plan', [], products, 'https://app.test', 'session-token'), 'https://checkout.stripe.com/c/pay/test');
