@@ -1,17 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 
 type IntegrationCardProps = {
   name: string;
   description: string;
   icon: string;
   initiallyConnected?: boolean;
+  connected?: boolean;
+  isLoading?: boolean;
+  onConnect?: () => void;
 };
 
-export function IntegrationCard({ name, description, icon, initiallyConnected = false }: IntegrationCardProps) {
-  const [connected, setConnected] = useState(initiallyConnected);
+export function IntegrationCard({
+  name,
+  description,
+  icon,
+  initiallyConnected = false,
+  connected: controlledConnected,
+  isLoading = false,
+  onConnect,
+}: IntegrationCardProps) {
+  const isConnected = controlledConnected ?? initiallyConnected;
+
+  const handleClick = () => {
+    onConnect?.();
+  };
 
   return (
     <article className="relative flex min-h-[70px] flex-col gap-3 overflow-hidden rounded-[10px] bg-white py-3 pl-4 pr-3 shadow-[0_0_2px_rgba(0,0,0,0.1)] sm:flex-row sm:items-center">
@@ -23,10 +37,11 @@ export function IntegrationCard({ name, description, icon, initiallyConnected = 
       </div>
       <button
         type="button"
-        onClick={() => setConnected((current) => !current)}
-        className={`h-9 shrink-0 rounded-[12px] border px-4 text-sm transition-colors ${connected ? "border-[#5B7FF0] bg-[#5B7FF0] text-white hover:bg-[#4E6FDE]" : "border-[#5B7FF0] bg-white text-[#5B7FF0] hover:bg-[#5B7FF0]/5"}`}
+        onClick={handleClick}
+        disabled={isLoading}
+        className={`h-9 shrink-0 rounded-[12px] border px-4 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${isConnected ? "border-[#5B7FF0] bg-[#5B7FF0] text-white hover:bg-[#4E6FDE]" : "border-[#5B7FF0] bg-white text-[#5B7FF0] hover:bg-[#5B7FF0]/5"}`}
       >
-        {connected ? "Connected" : "Connect"}
+        {isLoading ? "Checking..." : isConnected ? "Connected" : "Connect"}
       </button>
     </article>
   );

@@ -105,7 +105,7 @@ export function Sidebar() {
             <X className="size-5 md:hidden" />
           </button>
         </div>
-        <label className="flex h-10 items-center gap-2 rounded-lg border border-[#8B93B8]/10 px-[13px] text-[#8B93B8]">
+        {/* <label className="flex h-10 items-center gap-2 rounded-lg border border-[#8B93B8]/10 px-[13px] text-[#8B93B8]">
           <Search className="size-5 shrink-0" />
           <input
             aria-label="Search navigation"
@@ -115,9 +115,9 @@ export function Sidebar() {
           <kbd className="rounded border border-[#8B93B8]/5 px-2 py-1 text-[10px]">
             ⌘K
           </kbd>
-        </label>
+        </label> */}
         <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex flex-col gap-2 border-b border-[#E4EAF8] pb-4">
+          <div className="flex flex-col gap-2 border-b border-[#E4EAF8] pb-2">
             {navigation.map((item) => {
               const active =
                 item.href === "/dashboard"
@@ -129,7 +129,7 @@ export function Sidebar() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex h-12 items-center gap-2 rounded-lg px-4 text-base font-medium transition-colors",
+                    "flex h-12 items-center gap-2 rounded-[8px] px-4 text-base font-medium transition-colors",
                     active
                       ? "border-l-2 border-[#5B7FF0] bg-[#5B7FF0]/10 text-[#5B7FF0]"
                       : "text-[#6B6B6B] hover:bg-[#F5F7FF] hover:text-[#5B7FF0]",
@@ -158,7 +158,7 @@ export function Sidebar() {
             {isSigningOut ? "Logging out..." : "Log out"}
           </button>
         </nav>
-        <div className="rounded-lg bg-[linear-gradient(100deg,#5F08FA_34%,#D946EF_148%)] p-4 text-white">
+        <div className="rounded-[12px] bg-[linear-gradient(100deg,#5F08FA_34%,#D946EF_148%)] px-4 py-2 text-white">
           <div className="flex items-center gap-2">
             <Crown className="size-5 fill-white" />
             <span className="text-base">Upgrade Plan</span>
@@ -168,7 +168,7 @@ export function Sidebar() {
           </p>
           <button
             type="button"
-            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg bg-white px-4 text-sm font-medium text-[#5B7FF0]"
+            className="mt-2 flex h-10 w-full items-center justify-between rounded-[10px] bg-white px-4 text-sm font-medium text-[#5B7FF0]"
           >
             Manage Subscription
             <ChevronRight className="size-4" />

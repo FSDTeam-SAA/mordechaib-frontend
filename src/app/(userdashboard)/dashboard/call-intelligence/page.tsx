@@ -259,7 +259,7 @@ export default function CallIntelligencePage() {
 
         <div className="relative flex items-center gap-3 self-end sm:self-auto">
           <Link
-            href="/dashboard/settings"
+            href="/dashboard/call-intelligence/settings"
             className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-base text-[#6B6B6B] transition hover:text-[#5B7FF0]"
           >
             <Settings2 className="size-5" strokeWidth={1.5} />
