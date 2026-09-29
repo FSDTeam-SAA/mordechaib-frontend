@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
   CalendarDays,
@@ -7,109 +11,62 @@ import {
   Phone,
   Rocket,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 import PricingPlanModal from "@/components/home/PricingPlanModal";
 import UsageEstimator from "@/components/home/UsageEstimator";
+import { checkoutRequest, type CheckoutPlan } from "@/lib/checkout-api";
 
-const plans = [
-  {
-    name: "Starter",
-    price: "$49",
-    note: "/mo",
-    description: "For solo operators and early-stage businesses.",
-    icon: Rocket,
-    color: "border-[#5B7FF0]",
-    button: "Start Free Trial",
-    groups: [
-      {
-        title: "Included Monthly Usage",
-        items: ["500 AI Actions", "1,000 CRM Contacts", "50 call minutes", "AI Meeting Capture - 10 hours"],
-      },
-      {
-        title: "Core Capabilities",
-        items: ["6 AI agents - unlimited voice notes", "Call recording & AI summaries", "Core AI workflows"],
-      },
-      {
-        title: "Support",
-        items: ["Standard support - 1 user"],
-      },
-    ],
-  },
-  {
-    name: "Growth",
-    price: "$149",
-    note: "/mo",
-    description: "For growing teams scaling operations and revenue.",
-    icon: Zap,
-    color: "border-[#5BA5E8]",
-    cardBg:
-      "bg-[linear-gradient(135deg,rgba(91,156,213,0.12)_0%,rgba(217,70,239,0.12)_100%)]",
-    popular: true,
-    button: "Start Free Trial",
-    groups: [
-      {
-        title: "Included Monthly Usage",
-        items: ["5,000 AI Actions", "10,000 CRM contacts", "150 call minutes", "AI Meeting Capture - 10 hours"],
-      },
-      {
-        title: "Core Capabilities",
-        items: ["6 AI agents - unlimited voice notes", "Call recording & AI summaries", "ROI dashboard / API & integrations"],
-      },
-      {
-        title: "Support",
-        items: ["Priority support - 5 users"],
-      },
-    ],
-  },
-  {
-    name: "Enterprise",
-    price: "$349",
-    note: "/mo",
-    description: "For businesses running AI-driven operations.",
-    icon: Building2,
-    color: "border-[#F59E0B]",
-    button: "Start Free Trial",
-    groups: [
-      {
-        title: "Included Monthly Usage",
-        items: ["15,000 AI Actions", "25,000 CRM contacts", "300 call minutes", "AI Meeting Capture - 10 hours"],
-      },
-      {
-        title: "Core Capabilities",
-        items: ["10 users / advanced AI workflows", "Private AI model options", "Call recording & AI summaries"],
-      },
-      {
-        title: "Support",
-        items: ["Success manager / SLA"],
-      },
-    ],
-  },
-  {
-    name: "CUSTOM / ORGANIZATION",
-    price: "Let's talk",
-    description: "Tailored capacity, integrations, and AI.",
-    icon: Zap,
-    color: "border-[#A855F7]",
-    button: "Contact Sales",
-    custom: true,
-    groups: [
-      {
-        title: "Tailored Monthly Usage",
-        items: ["Custom AI actions & contacts", "Custom call-minute allocation", "AI Meeting Capture - 10 hours+"],
-      },
-      {
-        title: "Custom Solutions",
-        items: ["Custom AI agent development", "Private datasets & integrations", "Private / hybrid deployment"],
-      },
-      {
-        title: "Dedicated Partnership",
-        items: ["Dedicated AI engineer / custom SLA"],
-      },
-    ],
-  },
-];
+type BillingCycle = "month" | "year";
+
+const planAppearance: Record<string, { icon: LucideIcon; color: string }> = {
+  STARTER: { icon: Rocket, color: "border-[#5B7FF0]" },
+  GROWTH: { icon: Zap, color: "border-[#5BA5E8]" },
+  ENTERPRISE: { icon: Building2, color: "border-[#F59E0B]" },
+  CUSTOM: { icon: Zap, color: "border-[#A855F7]" },
+};
+
+const money = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+});
+
+const formatLimit = (value: number) => new Intl.NumberFormat("en-US").format(value);
+
+function planGroups(plan: CheckoutPlan) {
+  const usage = [
+    plan.aiActionsPerMonth != null && `${formatLimit(plan.aiActionsPerMonth)} AI Actions`,
+    plan.crmContactsLimit != null && `${formatLimit(plan.crmContactsLimit)} CRM Contacts`,
+    plan.callMinutesPerMonth != null && `${formatLimit(plan.callMinutesPerMonth)} call minutes`,
+    plan.meetingHoursPerMonth != null && `AI Meeting Capture - ${formatLimit(plan.meetingHoursPerMonth)} hours`,
+  ].filter(Boolean) as string[];
+  const capabilities = [
+    plan.aiAgentsIncluded != null && `${formatLimit(plan.aiAgentsIncluded)} AI agents`,
+    ...(plan.features ?? []),
+  ].filter(Boolean) as string[];
+  const support = [
+    plan.usersIncluded != null && `${formatLimit(plan.usersIncluded)} user${plan.usersIncluded === 1 ? "" : "s"} included`,
+  ].filter(Boolean) as string[];
+
+  return [
+    { title: "Included Monthly Usage", items: usage },
+    { title: "Core Capabilities", items: capabilities },
+    { title: "Support", items: support },
+  ].filter((group) => group.items.length > 0);
+}
 
 const PricingSection = () => {
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("month");
+  const plansQuery = useQuery({
+    queryKey: ["subscription-plans", billingCycle],
+    queryFn: ({ signal }) =>
+      checkoutRequest<CheckoutPlan[]>(`/subscription-plans?billingCycle=${billingCycle}`, { signal }),
+  });
+  const plans = plansQuery.data ?? [];
+  const yearlyAvailable = plans.some((plan) => plan.billingCycles?.includes("year"));
+  const maximumTrialDays = Math.max(0, ...plans.map((plan) => plan.trialDays ?? 0));
+
   return (
     <section id="pricing" className="px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
       <div className="container mx-auto">
@@ -123,7 +80,7 @@ const PricingSection = () => {
             <span className="text-[#5B7FF0]">Ready.</span>
           </h2>
           <p className="mt-4 text-sm text-[#6B6B6B] sm:text-base">
-            Enjoy a full 7-day free trial. We&apos;ll only bill your card if you continue after the trial.
+            {maximumTrialDays > 0 ? `Enjoy up to a ${maximumTrialDays}-day free trial.` : "Explore our available plans."} We&apos;ll only bill your card if you continue after the trial.
           </p>
         </div>
 
@@ -132,25 +89,48 @@ const PricingSection = () => {
         </div>
 
         <div className="mt-10 text-center">
-          <div className="mx-auto flex w-full max-w-[330px] rounded-[16px] bg-[#F5F7FF] p-2">
-            <button className="h-12 flex-1 rounded-[12px] bg-[#5B7FF0] text-base font-semibold text-white">
+          <div className="mx-auto flex w-full max-w-[330px] rounded-[16px] bg-[#F5F7FF] p-2" role="group" aria-label="Billing cycle">
+            <button
+              type="button"
+              onClick={() => setBillingCycle("month")}
+              aria-pressed={billingCycle === "month"}
+              className={`h-12 flex-1 rounded-[12px] text-base font-semibold ${billingCycle === "month" ? "bg-[#5B7FF0] text-white" : "text-[#5B7FF0]"}`}
+            >
               Monthly
             </button>
-            <button className="h-11 flex-1 rounded-lg text-base font-semibold text-[#5B7FF0]">
-              Yearly <span className="ml-1 rounded-full bg-[#DDE7FF] px-2 py-1 text-[12px]">2 months free</span>
+            <button
+              type="button"
+              onClick={() => yearlyAvailable && setBillingCycle("year")}
+              disabled={plansQuery.isSuccess && !yearlyAvailable}
+              title={plansQuery.isSuccess && !yearlyAvailable ? "Yearly billing is currently unavailable." : undefined}
+              aria-pressed={billingCycle === "year"}
+              className={`h-11 flex-1 rounded-lg text-base font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${billingCycle === "year" ? "bg-[#5B7FF0] text-white" : "text-[#5B7FF0]"}`}
+            >
+              Yearly <span className="ml-1 rounded-full bg-[#DDE7FF] px-2 py-1 text-[12px] text-[#5B7FF0]">2 months free</span>
             </button>
           </div>
         </div>
-        
-        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4 ">
+
+        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {plansQuery.isPending && <p role="status" className="col-span-full text-center text-sm text-[#7A849D]">Loading subscription plans…</p>}
+          {plansQuery.isError && (
+            <div role="alert" className="col-span-full text-center text-sm text-red-500">
+              {plansQuery.error.message}{" "}
+              <button type="button" onClick={() => void plansQuery.refetch()} className="font-semibold underline">Try again</button>
+            </div>
+          )}
+          {!plansQuery.isPending && !plansQuery.isError && plans.length === 0 && (
+            <p className="col-span-full text-center text-sm text-[#7A849D]">No subscription plans are available for this billing cycle.</p>
+          )}
           {plans.map((plan) => {
-            const Icon = plan.icon;
+            const appearance = planAppearance[plan.planType] ?? planAppearance.STARTER;
+            const Icon = appearance.icon;
+            const custom = plan.isInquiryOnly || plan.planType === "CUSTOM";
+            const price = billingCycle === "year" ? plan.annualPriceUsd : plan.priceUsd;
+            const groups = planGroups(plan);
             return (
-              <article
-                key={plan.name}
-                className={`relative flex rounded-xl border-2 ${plan.color} bg-white p-5 shadow-sm flex-col`}
-              >
-                {plan.popular && (
+              <article key={plan._id} className={`relative flex flex-col rounded-xl border-2 ${appearance.color} bg-white p-5 shadow-sm`}>
+                {plan.isMostPopular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-[12px] bg-[#5B7FF0] px-4 py-1.5 text-xs font-semibold text-white">
                     Most Popular
                   </div>
@@ -161,21 +141,17 @@ const PricingSection = () => {
                   </span>
                   <h3 className="text-xl font-bold text-[#0E1224]">{plan.name}</h3>
                 </div>
-                <p className="mt-4 min-h-[42px] text-base  text-[#0E1224]">
-                  {plan.description}
-                </p>
+                <p className="mt-4 min-h-[42px] text-base text-[#0E1224]">{plan.tagline || "A flexible plan for your business."}</p>
                 <div className="mt-6 border-b pb-6">
-                  <span className={plan.custom ? "text-2xl font-bold text-[#0E1224]" : "text-[44px] font-bold leading-none text-[#A567F5]"}>
-                    {plan.price}
+                  <span className={custom ? "text-2xl font-bold text-[#0E1224]" : "text-[44px] font-bold leading-none text-[#A567F5]"}>
+                    {custom ? "Let's talk" : price == null ? "Contact sales" : money.format(price)}
                   </span>
-                  {plan.note && <span className="ml-1 text-sm text-[#7A7A7A]">{plan.note}</span>}
+                  {!custom && price != null && <span className="ml-1 text-sm text-[#7A7A7A]">/{billingCycle === "year" ? "yr" : "mo"}</span>}
                 </div>
                 <div className="mt-6 space-y-5">
-                  {plan.groups.map((group) => (
+                  {groups.map((group) => (
                     <div key={group.title}>
-                      <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#7A849D]">
-                        {group.title}
-                      </h4>
+                      <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#7A849D]">{group.title}</h4>
                       <ul className="mt-2 space-y-2">
                         {group.items.map((item) => (
                           <li key={item} className="flex gap-2 text-sm leading-relaxed text-[#0E1224]">
@@ -197,12 +173,7 @@ const PricingSection = () => {
                   </div>
                 </div>
 
-                <PricingPlanModal
-                  planName={plan.name}
-                  price={plan.price}
-                  popular={plan.popular}
-                  custom={plan.custom}
-                />
+                <PricingPlanModal plan={plan} billingCycle={billingCycle} popular={plan.isMostPopular} />
               </article>
             );
           })}

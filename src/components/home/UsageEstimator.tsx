@@ -91,8 +91,7 @@ const UsageEstimator = () => {
           </div>
         </div>
         <p className="mx-auto mt-8 max-w-[1100px] text-center text-sm font-bold leading-7 text-[#5B7FF0]">
-          Recommended Plan: Growth, Estimated Add-Ons: +2000 mins, +5000 actions,{" "}
-          Recommended Add-On: AI Meeting Capture Pack, Estimated Meeting Hours Needed: 10–75 hours depending on usage
+          Recommended: Growth plan · Add-ons: 2,000 call minutes, 5,000 AI actions, and Meeting Capture.
         </p>
       </div>
     </section>
