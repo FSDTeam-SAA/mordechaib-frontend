@@ -27,7 +27,11 @@ import {
 import { SummaryDonutCard } from "./_components/SummaryDonutCard";
 import type { Task } from "./_components/TaskItem";
 import { TaskStatCard } from "./_components/TaskStatCard";
-import { UpcomingCalendarCard } from "./_components/UpcomingCalendarCard";
+import {
+  UpcomingCalendarCard,
+  type UpcomingMeeting,
+} from "./_components/UpcomingCalendarCard";
+import { UpcomingCalendarSkeleton } from "./_components/UpcomingCalendarSkeleton";
 
 type TaskCounts = {
   total: number;
@@ -116,6 +120,15 @@ type TaskDetailsResponse = {
   data?: TaskDetailsData;
 };
 
+type UpcomingMeetingsResponse = {
+  success?: boolean;
+  message?: string | string[];
+  data?: {
+    asOf: string;
+    items: UpcomingMeeting[];
+  };
+};
+
 type TaskFilters = {
   statusGroup: string;
   priority: string;
@@ -195,7 +208,7 @@ function mapTask(task: ApiTask): Task {
   };
 }
 
-const inputClassName = "h-10 w-full rounded-lg border border-[#E4EAF8] bg-white px-3 text-sm text-[#0E1224] outline-none focus:border-[#5B7FF0]";
+const inputClassName = "h-10 w-full rounded-[12px] border border-[#E4EAF8] bg-white px-3 text-sm text-[#0E1224] outline-none focus:border-[#5B7FF0]";
 
 export default function TaskPage() {
   const router = useRouter();
@@ -229,6 +242,27 @@ export default function TaskPage() {
       });
       const result = (await response.json().catch(() => ({}))) as TaskOverviewResponse;
       if (!response.ok || !result.success || !result.data) throw new Error(getMessage(result, "Unable to load task overview."));
+      return result.data;
+    },
+  });
+
+  const upcomingMeetingsQuery = useQuery({
+    queryKey: ["organizer-dashboard", "upcoming-meetings"],
+    enabled: sessionStatus === "authenticated" && Boolean(accessToken),
+    queryFn: async () => {
+      if (!accessToken) {
+        throw new Error("Your session is missing. Please sign in again.");
+      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/organizer-dashboard/upcoming-meetings`,
+        { headers: { Authorization: `Bearer ${accessToken}` } },
+      );
+      const result = (await response
+        .json()
+        .catch(() => ({}))) as UpcomingMeetingsResponse;
+      if (!response.ok || !result.success || !result.data) {
+        throw new Error(getMessage(result, "Unable to load upcoming meetings."));
+      }
       return result.data;
     },
   });
@@ -454,20 +488,20 @@ export default function TaskPage() {
       )}
 
       <section className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <label className="flex h-11 w-full max-w-[320px] items-center gap-2 rounded-lg border border-[#8B93B8]/10 bg-white px-3">
+        <label className="flex h-11 w-full max-w-[320px] items-center gap-2 rounded-[12px] border border-[#8B93B8]/10 bg-white px-3">
           <Search className="size-5 text-[#8B93B8]" />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks..." className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#8B93B8]" />
         </label>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="flex items-center overflow-x-auto rounded-lg bg-white p-1">
+          <div className="flex items-center overflow-x-auto rounded-[12px] bg-white p-1">
             {tabs.map((tab) => (
               <button type="button" onClick={() => changeTab(tab)} className={`whitespace-nowrap rounded-[12px] px-3 py-2 text-sm transition-colors ${activeTab === tab ? "bg-[#5B7FF0]/10 text-[#5B7FF0]" : "text-[#8B93B8] hover:text-[#5B7FF0]"}`} key={tab}>{tab}</button>
             ))}
           </div>
-          <button type="button" onClick={() => setShowFilters((current) => !current)} className="flex h-11 items-center justify-center gap-2 rounded-lg border border-[#E4EAF8] bg-white px-4 text-sm text-[#0E1224]">
+          <button type="button" onClick={() => setShowFilters((current) => !current)} className="flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#E4EAF8] bg-white px-4 text-sm text-[#0E1224]">
             <SlidersHorizontal className="size-4" /> Filters
           </button>
-          <button type="button" onClick={() => router.push("/dashboard/tasks/add-task")} className="flex h-11 items-center justify-center gap-2 rounded-lg bg-[#5B7FF0] px-6 text-sm font-medium text-white hover:bg-[#4E6FDE]">
+          <button type="button" onClick={() => router.push("/dashboard/tasks/add-task")} className="flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[#5B7FF0] px-6 text-sm font-medium text-white hover:bg-[#4E6FDE]">
             <Plus className="size-5" /> Add New Task
           </button>
         </div>
@@ -505,7 +539,15 @@ export default function TaskPage() {
           )}
         </div>
         <aside className="space-y-4">
-          <UpcomingCalendarCard />
+          {sessionStatus === "loading" || upcomingMeetingsQuery.isLoading ? (
+            <UpcomingCalendarSkeleton />
+          ) : (
+            <UpcomingCalendarCard
+              meetings={upcomingMeetingsQuery.data?.items ?? []}
+              isError={upcomingMeetingsQuery.isError}
+              onRetry={() => void upcomingMeetingsQuery.refetch()}
+            />
+          )}
           {isOverviewLoading ? <><TaskSummarySkeleton /><TaskSummarySkeleton /></> : !overview ? (
             <TaskOverviewError onRetry={() => void overviewQuery.refetch()} />
           ) : (

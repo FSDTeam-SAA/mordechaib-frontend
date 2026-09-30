@@ -53,9 +53,33 @@ export function NewMeetingModal({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [sendBot, setSendBot] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [invitees, setInvitees] = useState<string[]>([]);
+  const [inviteeInput, setInviteeInput] = useState("");
   const [timezone] = useState(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
   );
+
+  const parseEmails = (value: string) =>
+    value
+      .split(/[\s,;]+/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+
+  const addInvitees = (value: string) => {
+    const emails = parseEmails(value);
+    if (emails.length === 0) return;
+
+    const invalidEmail = emails.find(
+      (email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    );
+    if (invalidEmail) {
+      toast.error(`${invalidEmail} is not a valid email address.`);
+      return;
+    }
+
+    setInvitees((current) => Array.from(new Set([...current, ...emails])));
+    setInviteeInput("");
+  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,10 +102,19 @@ export function NewMeetingModal({ children }: { children: ReactNode }) {
       return;
     }
 
-    const invitees = String(formData.get("invitees") || "")
-      .split(/[\n,]+/)
-      .map((email) => email.trim())
-      .filter(Boolean);
+    const pendingInvitees = parseEmails(inviteeInput);
+    const invalidEmail = pendingInvitees.find(
+      (email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    );
+    if (invalidEmail) {
+      toast.error(`${invalidEmail} is not a valid email address.`);
+      return;
+    }
+    const allInvitees = Array.from(new Set([...invitees, ...pendingInvitees]));
+    if (allInvitees.length === 0) {
+      toast.error("Please add at least one invitee email.");
+      return;
+    }
     const platform = String(formData.get("platform") || "GOOGLE_MEET");
 
     const payload = {
@@ -91,7 +124,7 @@ export function NewMeetingModal({ children }: { children: ReactNode }) {
       startsAt: localStart.toISOString(),
       durationMinutes: Number(formData.get("durationMinutes")),
       timezone,
-      invitees,
+      invitees: allInvitees,
       reminderMinutesBeforeStart: Number(
         formData.get("reminderMinutesBeforeStart"),
       ),
@@ -130,6 +163,8 @@ export function NewMeetingModal({ children }: { children: ReactNode }) {
       }
 
       form.reset();
+      setInvitees([]);
+      setInviteeInput("");
       setSendBot(true);
       setOpen(false);
       toast.success(getResponseMessage(result, "Meeting scheduled successfully."));
@@ -183,14 +218,39 @@ export function NewMeetingModal({ children }: { children: ReactNode }) {
                   className={fieldClassName}
                 />
               </Field>
-              <Field label="Invitee emails*">
-                <input
-                  required
-                  type="text"
-                  name="invitees"
-                  placeholder="guest@example.com, team@example.com"
-                  className={fieldClassName}
-                />
+              <Field label={`Invitee emails*${invitees.length ? ` (${invitees.length})` : ""}`}>
+                <div className="flex min-h-[51px] w-full flex-wrap items-center gap-1.5 rounded-[12px] bg-[#F5F7FF] px-3 py-2 focus-within:ring-1 focus-within:ring-[#5B7FF0]">
+                  {invitees.map((email) => (
+                    <span key={email} className="flex max-w-full items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#44506F] shadow-sm ring-1 ring-[#E4EAF8]">
+                      <span className="max-w-[180px] truncate">{email}</span>
+                      <button type="button" aria-label={`Remove ${email}`} onClick={() => setInvitees((current) => current.filter((item) => item !== email))} className="flex size-4 shrink-0 items-center justify-center rounded-full text-[#8B93B8] transition-colors hover:bg-[#EF4444]/10 hover:text-[#EF4444]"><X className="size-3" /></button>
+                    </span>
+                  ))}
+                  <input
+                    type="email"
+                    value={inviteeInput}
+                    onChange={(event) => setInviteeInput(event.target.value)}
+                    onBlur={() => addInvitees(inviteeInput)}
+                    onPaste={(event) => {
+                      const pastedValue = event.clipboardData.getData("text");
+                      if (/[\s,;]/.test(pastedValue.trim())) {
+                        event.preventDefault();
+                        addInvitees(pastedValue);
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === "," || event.key === ";") {
+                        event.preventDefault();
+                        addInvitees(inviteeInput);
+                      } else if (event.key === "Backspace" && !inviteeInput && invitees.length) {
+                        setInvitees((current) => current.slice(0, -1));
+                      }
+                    }}
+                    placeholder={invitees.length ? "Add another email" : "Type email, then press Enter"}
+                    className="h-7 min-w-[190px] flex-1 bg-transparent px-1 text-sm text-[#0E1224] outline-none placeholder:text-[#8B93B8]"
+                  />
+                </div>
+                <span className="mt-1.5 block text-xs text-[#8B93B8]">Press Enter or comma after each email. You can also paste multiple emails.</span>
               </Field>
             </div>
             <Field label="Agenda*">

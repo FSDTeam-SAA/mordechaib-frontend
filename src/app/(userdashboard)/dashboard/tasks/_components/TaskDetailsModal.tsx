@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
@@ -227,7 +228,7 @@ export function TaskDetailsModal({
         data-lenis-prevent
         showClose={false}
         overlayClassName="bg-black/30 backdrop-blur-[3px]"
-        className="flex max-h-[calc(100dvh-24px)] w-[calc(100%-24px)] max-w-[820px] flex-col gap-0 overflow-hidden rounded-2xl border-0 bg-white p-0 shadow-xl sm:max-h-[calc(100dvh-48px)]"
+        className="flex h-[calc(100dvh-24px)] max-h-[760px] w-[calc(100%-32px)] max-w-[820px] flex-col gap-0 overflow-hidden rounded-[12px] border-0 bg-white p-0 shadow-xl sm:h-[calc(100dvh-48px)]"
       >
         <header className="flex shrink-0 items-center justify-between border-b border-[#E4EAF8] px-4 py-4 sm:px-6">
           <div className="min-w-0">
@@ -238,14 +239,15 @@ export function TaskDetailsModal({
               View complete task information
             </DialogDescription>
           </div>
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            aria-label="Close task details"
-            className="ml-3 flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F5F7FF] text-[#64748B] hover:text-[#0E1224]"
-          >
-            <X className="size-5" />
-          </button>
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label="Close task details"
+              className="ml-3 flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F5F7FF] text-[#64748B] transition-colors hover:bg-[#E4EAF8] hover:text-[#0E1224]"
+            >
+              <X className="size-5" />
+            </button>
+          </DialogClose>
         </header>
 
         <div

@@ -18,7 +18,6 @@ import {
   LayoutGrid,
   LogOut,
   Menu,
-  Search,
   Settings,
   Sparkles,
   Users,

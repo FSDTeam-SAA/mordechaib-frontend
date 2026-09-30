@@ -15,6 +15,7 @@ export default function Header() {
   );
   const isCallIntelligenceSettingsPage =
     pathname === "/dashboard/call-intelligence/settings";
+  const isCallIntelligenceDetailsPage = /^\/dashboard\/call-intelligence\/[^/]+$/.test(pathname) && !isCallIntelligenceSettingsPage;
   const isSettingsPage = pathname.startsWith("/dashboard/settings");
   const settingsSection = pathname.endsWith("/security") ? "Security" : pathname.endsWith("/notifications") ? "Notifications" : pathname.endsWith("/integrations") ? "Integrations" : pathname.endsWith("/workspace") ? "Workspace" : pathname.endsWith("/ai-settings") ? "AI Settings" : "Profile";
   const title = isCallIntelligencePage
@@ -37,11 +38,11 @@ export default function Header() {
           <p className="hidden items-center text-sm font-medium text-[#8B93B8] sm:flex">
             Dashboard <span className="mx-2 text-[#5B7FF0]">›</span>
             {isSettingsPage && <><span>Settings</span><span className="mx-2 text-[#5B7FF0]">›</span></>}
-            {isCallIntelligenceSettingsPage ? (
+            {isCallIntelligenceSettingsPage || isCallIntelligenceDetailsPage ? (
               <>
                 <span>Call Intelligence</span>
                 <span className="mx-2 text-[#5B7FF0]">›</span>
-                <span className="text-[#5B7FF0]">Settings</span>
+                <span className="text-[#5B7FF0]">{isCallIntelligenceSettingsPage ? "Settings" : "View details"}</span>
               </>
             ) : (
               <span className="text-[#5B7FF0]">{isCallIntelligencePage ? "Call Intelligence" : isRoiPage ? "ROI Dashboard" : isSettingsPage ? settingsSection : isAddTaskPage ? "Add New Task" : "Task"}</span>
