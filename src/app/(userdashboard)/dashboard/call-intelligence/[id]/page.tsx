@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   CalendarCheck2,
   Check,
-  CircleX,
   Download,
   Mail,
   Play,
@@ -19,9 +18,12 @@ import {
   TriangleAlert,
   AlertCircle,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import { CallDetailsSkeleton } from "../_components/CallDetailsSkeleton";
-import type { CallDetails } from "../_components/callDetailsTypes";
+import { PriorityTaskDetailsModal } from "../_components/PriorityTaskDetailsModal";
+import { ClarificationAnswerModal } from "../_components/ClarificationAnswerModal";
+import type { CallDetails, ClarificationQuestion } from "../_components/callDetailsTypes";
 
 const waveform = [
   4, 4, 5, 5, 11, 11, 6, 6, 3, 3, 7, 9, 9, 4, 4, 8, 8, 6, 6, 12, 12, 8, 8, 5, 5,
@@ -45,6 +47,8 @@ export default function CallDetailsPage() {
   const [playing, setPlaying] = useState(false);
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState("All");
+  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
+  const [selectedClarification, setSelectedClarification] = useState<{ proposalId: string; question: ClarificationQuestion } | null>(null);
   const detailsQuery = useQuery({
     queryKey: ["call-intelligence-details", sourceId, sourceType],
     enabled: sessionStatus === "authenticated" && Boolean(accessToken) && Boolean(sourceId) && Boolean(sourceType),
@@ -68,11 +72,17 @@ export default function CallDetailsPage() {
     });
     return details?.transcript.text ? [{ id: "full-transcript", name: "Transcript", avatar: "/call-intelligence/details/avatar-2.png", time: "Full transcript", text: details.transcript.text, type: "All" }] : [];
   }, [details]);
-  const priorityTasks = useMemo(() => (details?.actions.priorityTasks || []).map((item) => [item.title || "Untitled task", item.dueDate ? new Date(item.dueDate).toLocaleString() : "No due date", item.priority || "MEDIUM", item.priority === "HIGH" ? "bg-[#EF4444]/10 text-[#EF4444]" : item.priority === "LOW" ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#F59E0B]/15 text-[#F59E0B]"] as const), [details]);
-  const schedule = useMemo(() => (details?.actions.meetingSchedules || []).map((item) => [item.title || "Untitled meeting", item.startsAt ? new Date(item.startsAt).toLocaleString() : "Time not specified"] as const), [details]);
+  const priorityTasks = useMemo(() => (details?.actions.priorityTasks || []).filter((item) => item.status?.toUpperCase() !== "NEEDS_CLARIFICATION").map((item) => [item.id, item.title || "Untitled task", item.dueDate ? new Date(item.dueDate).toLocaleString() : "No due date", item.priority || "MEDIUM", item.priority === "HIGH" ? "bg-[#EF4444]/10 text-[#EF4444]" : item.priority === "LOW" ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#F59E0B]/15 text-[#F59E0B]", item.status || "PENDING"] as const), [details]);
+  const schedule = useMemo(() => (details?.actions.meetingSchedules || []).filter((item) => item.status?.toUpperCase() !== "NEEDS_CLARIFICATION").map((item) => [item.id, item.title || "Untitled meeting", item.startsAt ? new Date(item.startsAt).toLocaleString() : "Time not specified", item.status || "PENDING"] as const), [details]);
   const clarificationQuestions = useMemo(() => {
-    const questions = [...(details?.actions.priorityTasks || []), ...(details?.actions.meetingSchedules || [])].flatMap((item) => item.clarificationQuestions || []);
-    return questions.filter((item, index) => questions.findIndex((question) => question.id && item.id ? question.id === item.id : question.question === item.question) === index);
+    const questions = [...(details?.actions.priorityTasks || []), ...(details?.actions.meetingSchedules || [])].flatMap((item) =>
+      (item.clarificationQuestions || []).map((question) => ({
+        proposalId: item.id,
+        question,
+        answered: Boolean(question.id && Object.prototype.hasOwnProperty.call(item.clarificationAnswers || {}, question.id)),
+      })),
+    );
+    return questions.filter((item, index) => questions.findIndex((entry) => entry.proposalId === item.proposalId && (entry.question.id && item.question.id ? entry.question.id === item.question.id : entry.question.question === item.question.question)) === index);
   }, [details]);
   const patternData = details?.analysis?.patternDetection || {};
   const patterns = Object.entries(patternData).filter((entry): entry is [string, number] => typeof entry[1] === "number").map(([key,value]) => [key.replace(/([A-Z])/g," $1").replace(/^./, (letter) => letter.toUpperCase()), `${value}%`]);
@@ -289,14 +299,16 @@ export default function CallDetailsPage() {
             <div className="mt-4 space-y-2">
               {clarificationQuestions.length === 0 ? <p className="rounded-lg bg-[#F5F7FF] p-4 text-center text-sm text-[#8B93B8]">No clarification questions are required.</p> : clarificationQuestions.map((item, index) => (
                 <div
-                  key={item.id || `${item.question}-${index}`}
+                  key={`${item.proposalId}-${item.question.id || index}`}
                   className="flex items-start gap-3 rounded-lg bg-[#F5F7FF] p-3"
                 >
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#5B7FF0] text-xs font-semibold text-white">{index + 1}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium leading-5 text-[#0E1224]">{item.question}</p>
+                    <p className="text-sm font-medium leading-5 text-[#0E1224]">{item.question.question}</p>
                   </div>
-                  <button type="button" className="h-9 shrink-0 rounded-[10px] bg-[#5B7FF0] px-4 text-xs font-medium text-white transition-colors hover:bg-[#4E6FDE]">Answer</button>
+                  <button type="button" disabled={item.answered} onClick={() => setSelectedClarification({ proposalId: item.proposalId, question: item.question })} className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[10px] bg-[#5B7FF0] px-4 text-xs font-medium text-white transition-colors hover:bg-[#4E6FDE] disabled:cursor-not-allowed disabled:bg-[#10B981]/10 disabled:text-[#10B981]">
+                    {item.answered && <Check className="size-3.5" />}{item.answered ? "Answered" : "Answer"}
+                  </button>
                 </div>
               ))}
             </div>
@@ -375,10 +387,10 @@ export default function CallDetailsPage() {
               <h2 className="text-xl font-medium">Priority task</h2>
             </div>
             <div className="mt-4 space-y-2">
-              {priorityTasks.map(([title, date, risk, style]) => (
+              {priorityTasks.map(([proposalId, title, date, risk, style, status]) => (
                 <div
-                  key={`${title}-${date}`}
-                  className="flex items-center rounded-lg bg-[#F5F7FF] py-2 pr-2"
+                  key={proposalId}
+                  className="flex flex-wrap items-center gap-2 rounded-lg bg-[#F5F7FF] py-2 pr-2"
                 >
                   <i className="mr-2 h-10 w-1 rounded-full bg-[#D24FC7]" />
                   <div className="min-w-0 flex-1">
@@ -388,6 +400,16 @@ export default function CallDetailsPage() {
                   <span className={`rounded-full px-2 py-1 text-xs ${style}`}>
                     {risk}
                   </span>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${status === "COMPLETED" || status === "APPROVED" ? "bg-[#10B981]/10 text-[#10B981]" : status === "REJECTED" || status === "FAILED" ? "bg-[#EF4444]/10 text-[#EF4444]" : status === "IN_PROGRESS" ? "bg-[#5B7FF0]/10 text-[#5B7FF0]" : "bg-[#F59E0B]/15 text-[#F59E0B]"}`}>
+                    {status.replaceAll("_", " ")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProposalId(proposalId)}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-[10px] bg-[#5B7FF0] px-3 text-xs font-medium text-white transition-colors hover:bg-[#4A6EE0]"
+                  >
+                    <Eye className="size-3.5" /> View Details
+                  </button>
                 </div>
               ))}
             </div>
@@ -400,30 +422,35 @@ export default function CallDetailsPage() {
               <h2 className="text-xl font-medium">Meeting Schedule</h2>
             </div>
             <div className="mt-4 space-y-2">
-              {schedule.map(([title, date]) => (
+              {schedule.map(([proposalId, title, date, status]) => (
                 <div
-                  key={title}
-                  className="flex items-center rounded-lg bg-[#F5F7FF] py-2 pr-2"
+                  key={proposalId}
+                  className="flex flex-wrap items-center gap-2 rounded-lg bg-[#F5F7FF] py-2 pr-2"
                 >
                   <i className="mr-2 h-10 w-1 rounded-full bg-[#10B981]" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{title}</p>
                     <p className="mt-1 text-xs text-[#8B93B8]">{date}</p>
                   </div>
-                  <div className="flex gap-3">
-                    <button aria-label="Reject" className="text-[#EF4444]">
-                      <CircleX className="size-5" />
-                    </button>
-                    <button aria-label="Approve" className="text-[#10B981]">
-                      <Check className="size-5 rounded-full border border-current p-0.5" />
-                    </button>
-                  </div>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${status === "APPROVED" ? "bg-[#10B981]/10 text-[#10B981]" : status === "REJECTED" || status === "FAILED" ? "bg-[#EF4444]/10 text-[#EF4444]" : "bg-[#F59E0B]/15 text-[#F59E0B]"}`}>{status.replaceAll("_", " ")}</span>
+                  <button type="button" onClick={() => setSelectedProposalId(proposalId)} className="inline-flex h-8 items-center gap-1.5 rounded-[10px] bg-[#5B7FF0] px-3 text-xs font-medium text-white transition-colors hover:bg-[#4A6EE0]"><Eye className="size-3.5" /> View Details</button>
                 </div>
               ))}
             </div>
           </article>
         </section>
       </div>
+      <PriorityTaskDetailsModal
+        proposalId={selectedProposalId}
+        open={Boolean(selectedProposalId)}
+        onOpenChange={(open) => !open && setSelectedProposalId(null)}
+      />
+      <ClarificationAnswerModal
+        open={Boolean(selectedClarification)}
+        proposalId={selectedClarification?.proposalId || null}
+        question={selectedClarification?.question || null}
+        onOpenChange={(open) => !open && setSelectedClarification(null)}
+      />
     </main>
   );
 }
