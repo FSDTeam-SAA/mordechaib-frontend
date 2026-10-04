@@ -1,11 +1,5 @@
-import React from 'react'
+import { AgentDashboard } from "./_components/AgentDashboard";
 
-const page = () => {
-  return (
-    <div>
-       <h1 className=' px-5 py-5 text-4xl'> Agents cooming soone</h1>
-    </div>
-  )
+export default function AgentsPage() {
+  return <AgentDashboard activeAgentId="cassie" />;
 }
-
-export default page

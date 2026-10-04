@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -37,7 +37,7 @@ function CardTitle({ children }: { children: React.ReactNode }) {
     </h2>
   );
 }
-export default function CallDetailsPage() {
+function CallDetailsContent() {
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const { data: session, status: sessionStatus } = useSession();
@@ -452,5 +452,13 @@ export default function CallDetailsPage() {
         onOpenChange={(open) => !open && setSelectedClarification(null)}
       />
     </main>
+  );
+}
+
+export default function CallDetailsPage() {
+  return (
+    <Suspense fallback={<CallDetailsSkeleton />}>
+      <CallDetailsContent />
+    </Suspense>
   );
 }

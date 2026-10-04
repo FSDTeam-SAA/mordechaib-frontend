@@ -1,11 +1,12 @@
-import React from 'react'
+import { Suspense } from "react";
+import { ChiefOfStaffDashboard } from "./_components/ChiefOfStaffDashboard";
 
-const page = () => {
+export default function ChiefOfStaffPage() {
   return (
-    <div>
-         <h1 className=' px-5 py-5 text-4xl'> Chief of Staff cooming soone</h1>
-    </div>
-  )
+    <Suspense
+      fallback={<div className="min-h-[calc(100vh-83px)] bg-[#F5F7FF]" />}
+    >
+      <ChiefOfStaffDashboard />
+    </Suspense>
+  );
 }
-
-export default page

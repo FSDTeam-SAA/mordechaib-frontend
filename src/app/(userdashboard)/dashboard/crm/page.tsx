@@ -1,11 +1,11 @@
-import React from 'react'
+import { CrmContactsTable } from "./_components/CrmContactsTable";
+import { CrmStatCards } from "./_components/CrmStatCards";
 
-const page = () => {
+export default function CrmPage() {
   return (
-    <div>
-       <h1 className=' px-5 py-5 text-4xl'> Crm cooming soone</h1>
+    <div className="min-h-[calc(100vh-83px)] p-4 text-[#0E1224]">
+      <CrmStatCards />
+      <CrmContactsTable />
     </div>
-  )
+  );
 }
-
-export default page

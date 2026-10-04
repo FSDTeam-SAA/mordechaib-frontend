@@ -21,17 +21,30 @@ type OAuthConnectResponse = {
   };
 };
 
-type ConnectionResponse = {
+type IntegrationItem = {
+  provider: string;
+  connected: boolean;
+  status?: string;
+};
+
+type IntegrationsResponse = {
   success?: boolean;
   message?: string;
-  connection?: boolean;
   data?: {
-    connection?: boolean;
-    connected?: boolean;
-    isConnected?: boolean;
-    active?: boolean;
-    status?: string;
+    items?: IntegrationItem[];
   };
+};
+
+const providerByName: Record<string, string> = {
+  Facebook: "FACEBOOK",
+  Instagram: "INSTAGRAM",
+  "Outlook Calendar": "OUTLOOK_CALENDAR",
+  "Google Account": "GOOGLE_CALENDAR",
+  Zoom: "ZOOM",
+  Twilio: "TWILIO",
+  Salesforce: "SALESFORCE",
+  "HubSpot CRM": "HUBSPOT",
+  "Custom CRM API": "CUSTOM_CRM_API",
 };
 
 const integrations = [
@@ -57,6 +70,12 @@ const integrations = [
     "Google Account",
     "Auto schedule meetings and check availability",
     "/settings/integrations/google-calendar.svg",
+    false,
+  ],
+  [
+    "Zoom",
+    "Schedule and manage Zoom video meetings",
+    "/settings/integrations/zoom.svg",
     false,
   ],
   [
@@ -93,64 +112,112 @@ const integrations = [
 
 export function IntegrationsPanel() {
   const { data: session } = useSession();
+  const [isOutlookConnecting, setIsOutlookConnecting] = useState(false);
   const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
-  const [isCheckingGoogle, setIsCheckingGoogle] = useState(true);
-  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
+  const [isCheckingIntegrations, setIsCheckingIntegrations] = useState(true);
+  const [connectedProviders, setConnectedProviders] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     const accessToken = session?.user.accessToken;
 
     if (!accessToken) {
-      setIsCheckingGoogle(false);
+      setIsCheckingIntegrations(false);
       return;
     }
 
     const controller = new AbortController();
 
-    const checkGoogleConnection = async () => {
-      setIsCheckingGoogle(true);
+    const getIntegrations = async () => {
+      setIsCheckingIntegrations(true);
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/google-meetings/oauth/connection`,
+          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/integrations`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
+            cache: "no-store",
             signal: controller.signal,
           },
         );
         const result = (await response
           .json()
-          .catch(() => ({}))) as ConnectionResponse;
+          .catch(() => ({}))) as IntegrationsResponse;
 
-        if (!response.ok) {
+        if (!response.ok || !result.success) {
           throw new Error(
-            result.message || "Unable to check Google Calendar connection.",
+            result.message || "Unable to load integrations.",
           );
         }
 
-        const connection =
-          result.data?.connection ??
-          result.data?.connected ??
-          result.data?.isConnected ??
-          result.data?.active ??
-          result.connection ??
-          (result.data?.status === "active" ||
-            result.data?.status === "connected");
-
-        setIsGoogleConnected(Boolean(connection));
+        const providers = Object.fromEntries(
+          (result.data?.items ?? []).map(
+            ({ provider, connected, status }) => [
+              provider.trim().toUpperCase(),
+              connected === true || status?.toUpperCase() === "CONNECTED",
+            ],
+          ),
+        );
+        setConnectedProviders(providers);
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError")
           return;
-        setIsGoogleConnected(false);
+        setConnectedProviders({});
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Unable to load integrations.",
+        );
       } finally {
-        if (!controller.signal.aborted) setIsCheckingGoogle(false);
+        if (!controller.signal.aborted) setIsCheckingIntegrations(false);
       }
     };
 
-    void checkGoogleConnection();
+    void getIntegrations();
 
     return () => controller.abort();
   }, [session?.user.accessToken]);
+
+  const connectOutlookCalendar = async () => {
+    if (isOutlookConnecting) return;
+
+    const accessToken = session?.user.accessToken;
+    if (!accessToken) {
+      toast.error("Your session is missing. Please sign in again.");
+      return;
+    }
+
+    setIsOutlookConnecting(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/calendar/outlook/oauth/connect`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      const result = (await response
+        .json()
+        .catch(() => ({}))) as OAuthConnectResponse;
+      const authorizationUrl = result.data?.authorizationUrl;
+
+      if (!response.ok || !result.success || !authorizationUrl) {
+        throw new Error(
+          result.message || "Unable to connect Outlook Calendar.",
+        );
+      }
+
+      window.location.assign(authorizationUrl);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to connect Outlook Calendar.",
+      );
+      setIsOutlookConnecting(false);
+    }
+  };
 
   const connectGoogleCalendar = async () => {
     if (isGoogleConnecting) return;
@@ -216,7 +283,10 @@ export function IntegrationsPanel() {
       </header>
       <div className="grid gap-4 p-4 md:grid-cols-2">
         {integrations.map(([name, description, icon, connected]) => {
+          const isOutlookCalendar = name === "Outlook Calendar";
           const isGoogleCalendar = name === "Google Account";
+          const isConnected =
+            connectedProviders[providerByName[name]] ?? connected;
 
           return (
             <IntegrationCard
@@ -225,12 +295,16 @@ export function IntegrationsPanel() {
               description={description}
               icon={icon}
               initiallyConnected={connected}
-              connected={isGoogleCalendar ? isGoogleConnected : undefined}
+              connected={isConnected}
               isLoading={
-                isGoogleCalendar && (isCheckingGoogle || isGoogleConnecting)
+                (isOutlookCalendar && isOutlookConnecting) ||
+                (isGoogleCalendar && isGoogleConnecting) ||
+                isCheckingIntegrations
               }
               onConnect={
-                isGoogleCalendar && !isGoogleConnected
+                isOutlookCalendar && !isConnected
+                  ? () => void connectOutlookCalendar()
+                  : isGoogleCalendar && !isConnected
                   ? () => void connectGoogleCalendar()
                   : undefined
               }
