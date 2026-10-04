@@ -14,12 +14,14 @@ type DeleteReportModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isPending?: boolean;
 };
 
 export function DeleteReportModal({
   open,
   onOpenChange,
   onConfirm,
+  isPending = false,
 }: DeleteReportModalProps) {
   return (
     <Dialog modal={false} open={open} onOpenChange={onOpenChange}>
@@ -66,6 +68,7 @@ export function DeleteReportModal({
               <Button
                 type="button"
                 variant="outline"
+                disabled={isPending}
                 className="h-[51px] rounded-lg border-[#5B7FF0] bg-white px-8 text-base font-medium text-[#5B7FF0] shadow-none hover:bg-[#F5F7FF] hover:text-[#5B7FF0]"
               >
                 Cancel
@@ -74,9 +77,10 @@ export function DeleteReportModal({
             <Button
               type="button"
               onClick={onConfirm}
+              disabled={isPending}
               className="h-[51px] rounded-lg bg-[#5B7FF0] px-8 text-base font-medium text-white shadow-none hover:bg-[#4E6FDE]"
             >
-              Delete Report
+              {isPending ? "Deleting..." : "Delete Report"}
             </Button>
           </div>
         </div>

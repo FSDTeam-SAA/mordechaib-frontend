@@ -8,11 +8,11 @@ import { TaskOverviewCard } from "./_components/TaskOverviewCard";
 
 const agents = [
   ["/profile.png", "Steve", "Sales Agent", true],
-  ["/profile2.png", "Cassie", "Support Agent", false],
-  ["/profile.png", "Vizzy", "Operations Agent", true],
-  ["/profile2.png", "Dexter", "Strategy Agent", true],
-  ["/profile.png", "Havi", "Design Agent", true],
-  ["/profile2.png", "Soshie", "Marketing Agent", true],
+  ["/cassie.png", "Cassie", "Support Agent", false],
+  ["/vizzy.png", "Vizzy", "Operations Agent", true],
+  ["/dexter.png", "Dexter", "Strategy Agent", true],
+  ["/havi.png", "Havi", "Design Agent", true],
+  ["/shshie.png", "Soshie", "Marketing Agent", true],
 ] as const;
 const meetings = [
   ["Johnson Construction - Deal Review", "2:00pm", "30min"],

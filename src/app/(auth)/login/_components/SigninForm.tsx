@@ -98,7 +98,7 @@ function SigninForm() {
                   onChange={(event) =>
                     setFormData((current) => ({ ...current, email: event.target.value }))
                   }
-                  className="h-11 w-full rounded-lg border border-transparent bg-[#f4f6fd] px-4 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
+                  className="h-11 w-full rounded-[8px] border border-transparent bg-[#f4f6fd] px-4 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
                   required
                 />
               </div>
@@ -122,7 +122,7 @@ function SigninForm() {
                     onChange={(event) =>
                       setFormData((current) => ({ ...current, password: event.target.value }))
                     }
-                    className="h-11 w-full rounded-lg border border-transparent bg-[#f4f6fd] pl-10 pr-11 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
+                    className="h-11 w-full rounded-[8px] border border-transparent bg-[#f4f6fd] pl-10 pr-11 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15"
                     required
                   />
                   <button

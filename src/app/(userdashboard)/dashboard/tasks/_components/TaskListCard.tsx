@@ -4,14 +4,18 @@ type TaskListCardProps = {
   title: string;
   accent: string;
   tasks: Task[];
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  onViewDetails: (id: string | number) => void;
+  onEdit: (id: string | number) => void;
+  onToggle: (id: string | number) => void;
+  onDelete: (id: string | number) => void;
 };
 
 export function TaskListCard({
   title,
   accent,
   tasks,
+  onViewDetails,
+  onEdit,
   onToggle,
   onDelete,
 }: TaskListCardProps) {
@@ -31,14 +35,22 @@ export function TaskListCard({
         </div>
       </header>
       <div className="mt-4 space-y-2">
-        {tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggle={onToggle}
-            onDelete={onDelete}
-          />
-        ))}
+        {tasks.length ? (
+          tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onViewDetails={onViewDetails}
+              onEdit={onEdit}
+              onToggle={onToggle}
+              onDelete={onDelete}
+            />
+          ))
+        ) : (
+          <p className="py-4 text-center text-sm text-[#8B93B8]">
+            No tasks found.
+          </p>
+        )}
       </div>
     </section>
   );

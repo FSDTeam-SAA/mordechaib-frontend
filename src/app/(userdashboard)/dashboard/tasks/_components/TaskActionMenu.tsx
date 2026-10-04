@@ -7,18 +7,17 @@ import { MoreHorizontal } from "lucide-react";
 type TaskActionMenuProps = {
   taskTitle: string;
   isComplete: boolean;
+  onViewDetails: () => void;
+  onEdit: () => void;
   onMarkComplete: () => void;
   onDelete: () => void;
 };
 
-const menuItems = [
-  { label: "View Details", icon: "/task-actions/view-details.svg", color: "text-[#64748B]" },
-  { label: "Edit Task", icon: "/task-actions/edit-task.svg", color: "text-[#5B7FF0]" },
-];
-
 export function TaskActionMenu({
   taskTitle,
   isComplete,
+  onViewDetails,
+  onEdit,
   onMarkComplete,
   onDelete,
 }: TaskActionMenuProps) {
@@ -57,18 +56,24 @@ export function TaskActionMenu({
           aria-label={`Actions for ${taskTitle}`}
           className="absolute right-0 top-full z-30 mt-1 flex w-[176px] flex-col gap-2 bg-[#F5F7FF] p-2"
         >
-          {menuItems.map((item) => (
-            <button
-              type="button"
-              role="menuitem"
-              key={item.label}
-              onClick={() => setIsOpen(false)}
-              className={`flex h-5 w-full items-center gap-1 whitespace-nowrap text-left font-sans text-base font-normal leading-normal ${item.color}`}
-            >
-              <Image src={item.icon} alt="" width={20} height={20} unoptimized />
-              {item.label}
-            </button>
-          ))}
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => closeAfter(onViewDetails)}
+            className="flex h-5 w-full items-center gap-1 whitespace-nowrap text-left font-sans text-base font-normal leading-normal text-[#64748B]"
+          >
+            <Image src="/task-actions/view-details.svg" alt="" width={20} height={20} unoptimized />
+            View Details
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => closeAfter(onEdit)}
+            className="flex h-5 w-full items-center gap-1 whitespace-nowrap text-left font-sans text-base font-normal leading-normal text-[#5B7FF0]"
+          >
+            <Image src="/task-actions/edit-task.svg" alt="" width={20} height={20} unoptimized />
+            Edit Task
+          </button>
           <button
             type="button"
             role="menuitem"

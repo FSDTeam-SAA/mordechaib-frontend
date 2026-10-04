@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useAuthPanelAnimation } from "@/lib/useAuthPanelAnimation";
 
 const fieldClassName =
-  "h-11 w-full rounded-[12px]-lg border border-transparent bg-[#f4f6fd] px-4 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15";
+  "h-11 w-full rounded-[8px] border border-transparent bg-[#f4f6fd] px-4 text-sm text-[#20263a] outline-none transition placeholder:text-[#a6afca] focus:border-[#5f7ff0] focus:bg-white focus:ring-2 focus:ring-[#5f7ff0]/15";
 
 const SignupFrom = () => {
   const router = useRouter();

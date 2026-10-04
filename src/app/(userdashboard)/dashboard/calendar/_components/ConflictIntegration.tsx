@@ -1,26 +1,8 @@
 import { AlertTriangle } from "lucide-react";
+import type { CalendarDashboard } from "./types";
 
-const conflicts = [
-  ["9:00 AM", "Client Review Call", "Ownership with", "Sales Standup", "warning"],
-  ["1:00 PM", "Follow-up Call", "No buffer time", "(15m Needed)", "error"],
-  ["3:00 PM", "Proposal Review", "Travel time Conflict", "(45m Needed)", "warning"],
-] as const;
-
-const integration = [
-  ["Task Created From Calls", "12"],
-  ["Upcoming Deadlines", "8"],
-  ["Follow-ups pending", "15"],
-  ["CRM Updates Today", "7"],
-  ["AI Remiders", "9"],
-] as const;
-
-function CardHeading({ children }: { children: React.ReactNode }) {
-  return <h2 className="border-b border-[#F5F7FF] pb-4 text-xl font-medium text-[#0E1224]">{children}</h2>;
-}
-
-export function ConflictIntegration() {
-  return <section className="grid gap-4 lg:grid-cols-2">
-    <article className="rounded-[16px] bg-white p-6"><CardHeading>Conflict Detection</CardHeading><p className="my-2 text-sm font-medium">3 Conflicts Detected</p><div className="space-y-2">{conflicts.map(([time,title,cause,detail,type])=><div key={title} className="grid grid-cols-[1fr_1fr_36px] items-center gap-2 rounded-[8px] bg-[#F5F7FF] p-2"><div className="min-w-0"><p className="text-xs text-[#8B93B8]">{time}</p><p className="mt-2 truncate text-sm">{title}</p></div><div className="min-w-0"><p className="truncate text-xs text-[#8B93B8]">{cause}</p><p className="mt-2 truncate text-sm">{detail}</p></div><span className={`flex size-9 items-center justify-center rounded-[10px] ${type==="error"?"bg-[#EF4444]/10 text-[#EF4444]":"bg-[#F59E0B]/10 text-[#F59E0B]"}`}><AlertTriangle className="size-5" /></span></div>)}</div></article>
-    <article className="rounded-[16px] bg-white p-6"><CardHeading>Task &amp; Calls Integration</CardHeading><div className="mt-4 space-y-2">{integration.map(([label,value])=><div key={label} className="flex h-[35px] items-center gap-2 rounded-[8px] bg-[#F5F7FF] pr-2 text-sm"><span className="h-full w-1 rounded-[2px] bg-[#10B981]" /><span className="flex-1">{label}</span><strong className="font-medium">{value}</strong></div>)}</div></article>
-  </section>;
+const showValue=(entry:{value:number|null;availability:string})=>entry.availability==="AVAILABLE"&&entry.value!==null?entry.value:"Unavailable";
+export function ConflictIntegration({conflicts,taskAndCalls,timezone}:{conflicts:CalendarDashboard["conflicts"];taskAndCalls:CalendarDashboard["taskAndCalls"];timezone:string}) {
+ const integrations=[["Tasks Created From Calls",taskAndCalls.tasksCreatedFromCalls],["Upcoming Deadlines",taskAndCalls.upcomingDeadlines],["Follow-ups Pending",showValue(taskAndCalls.followUpsPending)],["CRM Updates Today",showValue(taskAndCalls.crmUpdatesToday)],["AI Reminders",taskAndCalls.aiReminders]];
+ return <section className="grid gap-4 lg:grid-cols-2"><article className="rounded-[16px] bg-white p-6"><h2 className="border-b border-[#F5F7FF] pb-4 text-xl font-medium">Conflict Detection</h2><p className="my-3 text-sm font-medium">{conflicts.items.length} conflict{conflicts.items.length===1?"":"s"} detected</p><div className="max-h-72 space-y-2 overflow-y-auto">{conflicts.items.length===0?<p className="rounded-[8px] bg-[#F5F7FF] p-4 text-sm text-[#8B93B8]">No scheduling conflicts found.</p>:conflicts.items.map((item,i)=><div key={`${item.meetingIds.join("-")}-${i}`} className="grid grid-cols-[1fr_1fr_36px] items-center gap-2 rounded-[8px] bg-[#F5F7FF] p-2"><div className="min-w-0"><p className="text-xs text-[#8B93B8]">{new Date(item.startsAt).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZone:timezone})}</p><p className="mt-2 truncate text-sm">{item.meetings[0]}</p></div><div className="min-w-0"><p className="truncate text-xs text-[#8B93B8]">{item.type.replaceAll("_"," ")}</p><p className="mt-2 truncate text-sm">{item.overlapMinutes?`${item.overlapMinutes} min overlap`:`${item.requiredBufferMinutes||0} min needed`}</p></div><span className="flex size-9 items-center justify-center rounded-[10px] bg-[#F59E0B]/10 text-[#F59E0B]"><AlertTriangle className="size-5"/></span></div>)}</div></article><article className="rounded-[16px] bg-white p-6"><h2 className="border-b border-[#F5F7FF] pb-4 text-xl font-medium">Tasks &amp; Calls Integration</h2><div className="mt-4 space-y-2">{integrations.map(([label,value])=><div key={label} className="flex min-h-[35px] items-center gap-2 rounded-[8px] bg-[#F5F7FF] pr-2 text-sm"><span className="self-stretch w-1 rounded-[2px] bg-[#10B981]"/><span className="flex-1 py-2">{label}</span><strong className="font-medium">{value}</strong></div>)}</div></article></section>;
 }
