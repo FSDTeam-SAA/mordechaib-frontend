@@ -11,6 +11,7 @@ import {
   FileText,
   RefreshCw,
   Loader2,
+  Pencil,
   Plus,
   Save,
   Tag,
@@ -140,7 +141,10 @@ export function PriorityTaskDetailsModal({ proposalId, open, onOpenChange }: Pri
     onSuccess: async (result) => {
       toast.success(getMessage(result, "Proposal updated successfully."));
       setIsEditing(false);
-      await proposalQuery.refetch();
+      await Promise.all([
+        proposalQuery.refetch(),
+        queryClient.invalidateQueries({ queryKey: ["call-intelligence-details"] }),
+      ]);
     },
     onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to update proposal."),
   });
@@ -292,6 +296,7 @@ export function PriorityTaskDetailsModal({ proposalId, open, onOpenChange }: Pri
             <button type="button" disabled={saveMutation.isPending} onClick={() => { setForm(structuredClone(proposal.payload || {})); setIsEditing(false); }} className="h-10 rounded-[8px] border border-[#E4EAF8] px-5 text-sm font-medium text-[#64748B] disabled:opacity-50">Cancel</button>
             <button type="button" disabled={saveMutation.isPending || !form.title?.trim()} onClick={() => saveMutation.mutate()} className="inline-flex h-10 items-center gap-2 rounded-[8px] bg-[#5B7FF0] px-5 text-sm font-medium text-white disabled:opacity-50">{saveMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save Changes</button>
           </> : <>
+            <button type="button" disabled={actionMutation.isPending} onClick={() => setIsEditing(true)} className="inline-flex h-10 items-center gap-2 rounded-[8px] border border-[#5B7FF0] px-5 text-sm font-medium text-[#5B7FF0] disabled:opacity-50"><Pencil className="size-4" /> Edit</button>
             <button type="button" disabled={actionMutation.isPending || proposal.status === "APPROVED" || proposal.status === "REJECTED"} onClick={() => actionMutation.mutate("REJECT")} className="inline-flex h-10 items-center gap-2 rounded-[8px] bg-[#EF4444] px-5 text-sm font-medium text-white disabled:opacity-50">{actionMutation.isPending && actionMutation.variables === "REJECT" ? <Loader2 className="size-4 animate-spin" /> : <XCircle className="size-4" />} {proposal.status === "REJECTED" ? "Rejected" : "Reject"}</button>
             <button type="button" disabled={actionMutation.isPending || proposal.status === "APPROVED" || proposal.status === "REJECTED"} onClick={() => actionMutation.mutate("APPROVE")} className="inline-flex h-10 items-center gap-2 rounded-[8px] bg-[#10B981] px-5 text-sm font-medium text-white disabled:opacity-50">{actionMutation.isPending && actionMutation.variables === "APPROVE" ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />} {proposal.status === "APPROVED" ? "Approved" : "Approve"}</button>
           </>}
