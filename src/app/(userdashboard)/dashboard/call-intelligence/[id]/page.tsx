@@ -24,6 +24,7 @@ import { CallDetailsSkeleton } from "../_components/CallDetailsSkeleton";
 import { PriorityTaskDetailsModal } from "../_components/PriorityTaskDetailsModal";
 import { ClarificationAnswerModal } from "../_components/ClarificationAnswerModal";
 import type { CallDetails, ClarificationQuestion } from "../_components/callDetailsTypes";
+import { getCallDetailsSourceType } from "../_components/types";
 
 const waveform = [
   4, 4, 5, 5, 11, 11, 6, 6, 3, 3, 7, 9, 9, 4, 4, 8, 8, 6, 6, 12, 12, 8, 8, 5, 5,
@@ -42,7 +43,10 @@ function CallDetailsContent() {
   const searchParams = useSearchParams();
   const { data: session, status: sessionStatus } = useSession();
   const sourceId = params.id;
-  const sourceType = searchParams.get("sourceType") || "";
+  const sourceType = getCallDetailsSourceType(
+    "",
+    searchParams.get("sourceType") || "",
+  );
   const accessToken = session?.user.accessToken;
   const [playing, setPlaying] = useState(false);
   const [query, setQuery] = useState("");

@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { IntegrationCard } from "./IntegrationCard";
+import { TwilioNumberModal } from "./TwilioNumberModal";
+import {
+  TwilioDetailsModal,
+  type TwilioIntegrationDetails,
+} from "./TwilioDetailsModal";
 
 type OAuthConnectResponse = {
   success?: boolean;
@@ -21,7 +26,7 @@ type OAuthConnectResponse = {
   };
 };
 
-type IntegrationItem = {
+type IntegrationItem = TwilioIntegrationDetails & {
   provider: string;
   connected: boolean;
   status?: string;
@@ -114,6 +119,13 @@ export function IntegrationsPanel() {
   const { data: session } = useSession();
   const [isOutlookConnecting, setIsOutlookConnecting] = useState(false);
   const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
+  const [isTwilioModalOpen, setIsTwilioModalOpen] = useState(false);
+  const [isTwilioDetailsOpen, setIsTwilioDetailsOpen] = useState(false);
+  const [twilioDetails, setTwilioDetails] =
+    useState<TwilioIntegrationDetails | null>(null);
+  const [connectingCrmProvider, setConnectingCrmProvider] = useState<
+    "HUBSPOT" | "SALESFORCE" | null
+  >(null);
   const [isCheckingIntegrations, setIsCheckingIntegrations] = useState(true);
   const [connectedProviders, setConnectedProviders] = useState<
     Record<string, boolean>
@@ -151,8 +163,9 @@ export function IntegrationsPanel() {
           );
         }
 
+        const items = result.data?.items ?? [];
         const providers = Object.fromEntries(
-          (result.data?.items ?? []).map(
+          items.map(
             ({ provider, connected, status }) => [
               provider.trim().toUpperCase(),
               connected === true || status?.toUpperCase() === "CONNECTED",
@@ -160,6 +173,11 @@ export function IntegrationsPanel() {
           ),
         );
         setConnectedProviders(providers);
+        setTwilioDetails(
+          items.find(
+            ({ provider }) => provider.trim().toUpperCase() === "TWILIO",
+          ) ?? null,
+        );
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError")
           return;
@@ -276,6 +294,54 @@ export function IntegrationsPanel() {
     }
   };
 
+  const connectCrm = async (provider: "HUBSPOT" | "SALESFORCE") => {
+    if (connectingCrmProvider) return;
+
+    const providerName = provider === "HUBSPOT" ? "HubSpot CRM" : "Salesforce";
+
+    const accessToken = session?.user.accessToken;
+    if (!accessToken) {
+      toast.error("Your session is missing. Please sign in again.");
+      return;
+    }
+
+    // Open synchronously so the browser does not block the OAuth tab after fetch.
+    const oauthWindow = window.open("about:blank", "_blank");
+    if (!oauthWindow) {
+      toast.error(`Please allow pop-ups to connect ${providerName}.`);
+      return;
+    }
+
+    oauthWindow.document.title = `Connecting ${providerName}...`;
+    setConnectingCrmProvider(provider);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/crm/connections/${provider}/connect`,
+        { headers: { Authorization: `Bearer ${accessToken}` } },
+      );
+      const result = (await response
+        .json()
+        .catch(() => ({}))) as OAuthConnectResponse;
+      const authorizationUrl = result.data?.authorizationUrl;
+
+      if (!response.ok || !result.success || !authorizationUrl) {
+        throw new Error(result.message || `Unable to connect ${providerName}.`);
+      }
+
+      oauthWindow.location.href = authorizationUrl;
+    } catch (error) {
+      oauthWindow.close();
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : `Unable to connect ${providerName}.`,
+      );
+    } finally {
+      setConnectingCrmProvider(null);
+    }
+  };
+
   return (
     <section className="overflow-hidden rounded-lg bg-white">
       <header className="border-b border-[#E4EAF8] p-4">
@@ -285,6 +351,9 @@ export function IntegrationsPanel() {
         {integrations.map(([name, description, icon, connected]) => {
           const isOutlookCalendar = name === "Outlook Calendar";
           const isGoogleCalendar = name === "Google Account";
+          const isHubSpot = name === "HubSpot CRM";
+          const isSalesforce = name === "Salesforce";
+          const isTwilio = name === "Twilio";
           const isConnected =
             connectedProviders[providerByName[name]] ?? connected;
 
@@ -299,6 +368,8 @@ export function IntegrationsPanel() {
               isLoading={
                 (isOutlookCalendar && isOutlookConnecting) ||
                 (isGoogleCalendar && isGoogleConnecting) ||
+                (isHubSpot && connectingCrmProvider === "HUBSPOT") ||
+                (isSalesforce && connectingCrmProvider === "SALESFORCE") ||
                 isCheckingIntegrations
               }
               onConnect={
@@ -306,12 +377,57 @@ export function IntegrationsPanel() {
                   ? () => void connectOutlookCalendar()
                   : isGoogleCalendar && !isConnected
                   ? () => void connectGoogleCalendar()
+                  : isHubSpot && !isConnected
+                  ? () => void connectCrm("HUBSPOT")
+                  : isSalesforce && !isConnected
+                  ? () => void connectCrm("SALESFORCE")
+                  : isTwilio && !isConnected
+                  ? () => setIsTwilioModalOpen(true)
+                  : undefined
+              }
+              onView={
+                isTwilio && isConnected
+                  ? () => setIsTwilioDetailsOpen(true)
                   : undefined
               }
             />
           );
         })}
       </div>
+      <TwilioNumberModal
+        open={isTwilioModalOpen}
+        onOpenChange={setIsTwilioModalOpen}
+        onPurchase={(phoneNumber, purchasedCountry, forwardingNumber) => {
+          setConnectedProviders((providers) => ({
+            ...providers,
+            TWILIO: true,
+          }));
+          setTwilioDetails({
+            provider: "TWILIO",
+            label: "Twilio",
+            connected: true,
+            status: "CONNECTED",
+            configuration: {
+              twilioNumber: phoneNumber,
+              forwardingNumber,
+              country: purchasedCountry,
+              numberType: "LOCAL",
+              enabledFeatures: {
+                voice: true,
+                sms: false,
+                mms: false,
+                callRecording: true,
+              },
+            },
+          });
+          toast.success(`${phoneNumber} purchased successfully.`);
+        }}
+      />
+      <TwilioDetailsModal
+        open={isTwilioDetailsOpen}
+        onOpenChange={setIsTwilioDetailsOpen}
+        details={twilioDetails}
+      />
     </section>
   );
 }
