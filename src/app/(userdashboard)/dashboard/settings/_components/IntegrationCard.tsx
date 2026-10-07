@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Eye } from "lucide-react";
 
 type IntegrationCardProps = {
   name: string;
@@ -10,6 +11,7 @@ type IntegrationCardProps = {
   connected?: boolean;
   isLoading?: boolean;
   onConnect?: () => void;
+  onView?: () => void;
 };
 
 export function IntegrationCard({
@@ -20,6 +22,7 @@ export function IntegrationCard({
   connected: controlledConnected,
   isLoading = false,
   onConnect,
+  onView,
 }: IntegrationCardProps) {
   const isConnected = controlledConnected ?? initiallyConnected;
 
@@ -35,14 +38,26 @@ export function IntegrationCard({
         <h3 className="truncate text-base font-medium text-[#0E1224]">{name}</h3>
         <p className="mt-1 text-xs leading-normal text-[#8B93B8]">{description}</p>
       </div>
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={isLoading}
-        className={`h-9 shrink-0 rounded-[12px] border px-4 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${isConnected ? "border-[#5B7FF0] bg-[#5B7FF0] text-white hover:bg-[#4E6FDE]" : "border-[#5B7FF0] bg-white text-[#5B7FF0] hover:bg-[#5B7FF0]/5"}`}
-      >
-        {isLoading ? "Checking..." : isConnected ? "Connected" : "Connect"}
-      </button>
+      <div className="flex shrink-0 items-center gap-2">
+        {onView && (
+          <button
+            type="button"
+            onClick={onView}
+            aria-label={`View ${name} details`}
+            className="flex size-9 items-center justify-center rounded-[10px] border border-[#DCE3F2] text-[#5B7FF0] transition-colors hover:border-[#5B7FF0] hover:bg-[#5B7FF0]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7FF0]/30"
+          >
+            <Eye className="size-[18px]" aria-hidden="true" />
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={handleClick}
+          disabled={isLoading}
+          className={`h-9 shrink-0 rounded-[12px] border px-4 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${isConnected ? "border-[#5B7FF0] bg-[#5B7FF0] text-white hover:bg-[#4E6FDE]" : "border-[#5B7FF0] bg-white text-[#5B7FF0] hover:bg-[#5B7FF0]/5"}`}
+        >
+          {isLoading ? "Checking..." : isConnected ? "Connected" : "Connect"}
+        </button>
+      </div>
     </article>
   );
 }

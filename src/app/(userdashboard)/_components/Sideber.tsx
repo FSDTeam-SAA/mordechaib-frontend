@@ -16,14 +16,24 @@ import {
   Crown,
   Headphones,
   LayoutGrid,
+  Loader2,
   LogOut,
   Menu,
   Settings,
   Sparkles,
+  UserRoundCog,
   Users,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutGrid },
@@ -31,6 +41,11 @@ const navigation = [
     name: "Call Intelligence",
     href: "/dashboard/call-intelligence",
     icon: Headphones,
+  },
+    {
+    name: "Customer ",
+    href: "/dashboard/customer",
+    icon: UserRoundCog,
   },
   {
     name: "Ai Chief of Staff",
@@ -49,6 +64,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleLogout = async () => {
@@ -149,7 +165,7 @@ export function Sidebar() {
           </Link>
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => setIsLogoutModalOpen(true)}
             disabled={isSigningOut}
             className="flex h-12 items-center gap-2 rounded-lg px-4 text-base font-medium text-[#6B6B6B] hover:bg-[#F5F7FF] disabled:cursor-not-allowed disabled:opacity-60"
           >
@@ -174,6 +190,57 @@ export function Sidebar() {
           </button>
         </div>
       </aside>
+      <Dialog
+        open={isLogoutModalOpen}
+        onOpenChange={(nextOpen) => {
+          if (!isSigningOut) setIsLogoutModalOpen(nextOpen);
+        }}
+      >
+        <DialogContent
+          showClose={false}
+          overlayClassName="bg-black/30 backdrop-blur-[3px]"
+          className="w-[calc(100%-32px)] max-w-[480px] gap-0 overflow-hidden rounded-2xl border-0 bg-white p-0 shadow-xl"
+        >
+          <div className="flex items-center gap-3 border-b border-[#E4EAF8] p-5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#EF4444]/10 text-[#EF4444]">
+              <LogOut className="size-5" />
+            </span>
+            <DialogTitle className="text-xl font-medium text-[#0E1224]">
+              Confirm Logout
+            </DialogTitle>
+          </div>
+
+          <div className="p-5 sm:p-6">
+            <DialogDescription className="text-base leading-6 text-[#64748B]">
+              Are you sure you want to log out of your account?
+            </DialogDescription>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSigningOut}
+                  className="h-11 border-[#5B7FF0] text-[#5B7FF0] hover:bg-[#F5F7FF] hover:text-[#5B7FF0]"
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button
+                type="button"
+                onClick={() => void handleLogout()}
+                disabled={isSigningOut}
+                className="h-11 bg-[#EF4444] text-white hover:bg-[#DC2626]"
+              >
+                {isSigningOut ? (
+                  <><Loader2 className="mr-2 size-4 animate-spin" /> Logging out...</>
+                ) : (
+                  "Log out"
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
